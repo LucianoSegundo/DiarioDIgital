@@ -1,5 +1,6 @@
 package com.LSoftwareLTDA.diarioDigital.entidades;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class Usuario {
     private List<Livro> livros;
 
     public Usuario(String nome, String senha){
-        this.livros
+        this.livros = new ArrayList<Livro>();
     }
 
 }

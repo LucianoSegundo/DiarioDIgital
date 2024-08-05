@@ -9,7 +9,7 @@ public class CapituloService {
 
      private UsuarioRepositorio userRepo;
 
-    public LivrosService(UsuarioRepositorio repositorio){
+    public CapituloService(UsuarioRepositorio repositorio){
         this.userRepo = repositorio;
 
     }
