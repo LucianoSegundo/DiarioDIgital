@@ -38,5 +38,14 @@ public class Usuario {
     public Usuario(String nome, String senha){
         this.livros = new ArrayList<Livro>();
     }
+    //get e seter adicionado pelo fato do eclipse não suportar lombok nativamente.
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+    
 
 }
