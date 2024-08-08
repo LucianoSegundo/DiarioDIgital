@@ -24,19 +24,33 @@ public class Usuario {
     @GeneratedValue(strategy =GenerationType.UUID)
     private UUID id;
 
-    @NotBlank(message = "Campo não deve ser nulo")
+    @NotBlank(message = "Campo nome não deve ser nulo")
     private String nome;
 
-    @NotBlank(message = "Campo não deve ser nulo")
+    @NotBlank(message = "Campo senha não deve ser nulo")
     private String senha;
+ 
+    
+    private int idade;
+    
+    @NotBlank(message = "Campo palavra de segurança não deve ser nulo")
+    private String PalavraSegu;
 
     private Boolean ativo;
+    
 
     @OneToMany
     private List<Livro> livros;
 
-    public Usuario(String nome, String senha){
+    public Usuario() {} 
+    
+    public Usuario(String nome, String senha, String palavra,int idade){
         this.livros = new ArrayList<Livro>();
+        this.senha = senha;
+        this.nome = nome;
+        this.idade = idade;
+        this.PalavraSegu = palavra;
+        this.ativo = true;
     }
     //get e seter adicionado pelo fato do eclipse não suportar lombok nativamente.
 	public String getSenha() {
@@ -46,6 +60,27 @@ public class Usuario {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
+	public UUID getId() {
+		return id;
+	}
+	public void setId(UUID id) {
+		this.id = id;
+	}
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getPalavraSegu() {
+		return PalavraSegu;
+	}
+
+	public void setPalavraSegu(String palavraSegu) {
+		PalavraSegu = palavraSegu;
+	}
+	
     
 
 }

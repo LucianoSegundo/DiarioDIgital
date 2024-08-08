@@ -21,14 +21,14 @@ import lombok.Setter;
 public class Livro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "Tb_Titulo")
     private String titulo;
 
     @OneToMany
-    @JoinColumn(name = "Tb_livro-Capitulo")
+    @JoinColumn(name = "Tb_livro_Capitulo")
     private List<Capitulo> capitulos;
 
     public Livro(String titulo){
