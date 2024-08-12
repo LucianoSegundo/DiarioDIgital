@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
-import com.LSoftwareLTDA.diarioDigital.excecoes.CadastroUsuariosException;
+import com.LSoftwareLTDA.diarioDigital.excecoes.GerenciamentoUsuariosException;
 import com.LSoftwareLTDA.diarioDigital.interfaces.RecuperacaoSenha;
 import com.LSoftwareLTDA.diarioDigital.repositorios.UsuarioRepositorio;
 
@@ -28,11 +28,11 @@ public class UserService {
 		System.out.println("Bean UserService criado");
 	}
 
-	public Usuario cadastrar(String nome, String senha, String palavra, int idade) throws Exception {
+	public Usuario cadastrarUsuario(String nome, String senha, String palavra, int idade) throws Exception {
 		var user = userRepo.findByNome(nome);
 
 		if (user.isPresent())
-			throw new CadastroUsuariosException("Usuário já cadastrado");
+			throw new GerenciamentoUsuariosException("Usuário já cadastrado");
 
 		if (nome.equals(null) || senha.equals(null) || palavra.equals(null))
 			throw new IllegalArgumentException("Cadastro não realizado, parametros não podem ser nulos");
@@ -46,7 +46,7 @@ public class UserService {
 
 	};
 
-	public Boolean excluir(UUID id,String senha) {
+	public Boolean excluirUsuario(UUID id,String senha) {
 		var user = userRepo.findById(id);
 
 		if (user.isPresent())
@@ -58,7 +58,7 @@ public class UserService {
 		return false;
 	};
 
-	public Usuario procurar(UUID id) {
+	public Usuario consultarUsuario(UUID id) {
 		var user = userRepo.findById(id);
 
 		if (user.isPresent())
@@ -67,7 +67,7 @@ public class UserService {
 		return null;
 	};
 
-	public Usuario logar(String nome, String senha) throws CadastroUsuariosException {
+	public Usuario logar(String nome, String senha) throws GerenciamentoUsuariosException {
 
 		if (nome.equals(null))
 			throw new IllegalArgumentException("Usuario não pode ser null");
@@ -84,7 +84,7 @@ public class UserService {
 
 		System.out.println("develarçar erro : " + nome);
 
-		throw new CadastroUsuariosException("Usurio não foi cadastrado");
+		throw new GerenciamentoUsuariosException("Usurio não foi cadastrado");
 	};
 
 	public Usuario trocarSenha(UUID id, String novasenha, String palavra) throws Exception {
@@ -118,6 +118,6 @@ public class UserService {
 				return trocarSenha(user.getId(), novasenha, palavra);
 				
 			}
-			else throw new CadastroUsuariosException("Usuário não foi cadastrado, não é permitido exclui-lo");
+			else throw new GerenciamentoUsuariosException("Usuário não foi cadastrado, não é permitido exclui-lo");
 	}
 }

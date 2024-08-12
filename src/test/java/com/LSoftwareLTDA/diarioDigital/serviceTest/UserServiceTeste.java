@@ -2,8 +2,6 @@ package com.LSoftwareLTDA.diarioDigital.serviceTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.isNotNull;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.LSoftwareLTDA.diarioDigital.excecoes.CadastroUsuariosException;
+import com.LSoftwareLTDA.diarioDigital.excecoes.GerenciamentoUsuariosException;
 import com.LSoftwareLTDA.diarioDigital.service.UserService;
+
 
 @ComponentScan(basePackages = "com.LSoftwareLTDA.diarioDigital.service")
 
@@ -27,11 +26,10 @@ class UserServiceTeste {
 // testes de cadastro
 	
 	@Test
-	@DisplayName("Cadastrar: Ao cadastrar deve retornar o usuário, isso se o nome do"
-			+ "usuário não foi cadastrado e a senha é valida")
+	@DisplayName("Cadastrar usuário com sucesso")
 	void CadastrarUserSucesso() throws Exception {
 
-		var usuario = userServi.cadastrar("Noel Gallager", "12345689", "calopsita", 22);
+		var usuario = userServi.cadastrarUsuario("Noel Gallager", "12345689", "calopsita", 22);
 
 		assertThat(usuario).describedAs("usuario retornou null").isNotNull();
 		assertThat(usuario.getId()).describedAs("Id do usuário não foi atribuido, retornou null").isNotNull();
@@ -44,33 +42,33 @@ class UserServiceTeste {
 	}
 
 	@Test
-	@DisplayName("Cadastrar: Ao repetir cadastro deve larçar uma excessão")
+	@DisplayName("Cadastrar usuário já cadastrado")
 	void CadastrarUserCadastrado() throws Exception {
 
-		userServi.cadastrar("Alex Turner", "12345689", "calopsita", 22);
+		userServi.cadastrarUsuario("Alex Turner", "12345689", "calopsita", 22);
 
-		assertThrows(CadastroUsuariosException.class, () -> {
-			userServi.cadastrar("Alex Turner", "12345689", "calopsita", 22);
+		assertThrows(GerenciamentoUsuariosException.class, () -> {
+			userServi.cadastrarUsuario("Alex Turner", "12345689", "calopsita", 22);
 		}, "Usuário que já estava cadastrado não foi barrada ao tentar se cadastrar");
 
 	}
 	
 	@Test
-	@DisplayName("Cadastrar: Ao tentar cadastrar um menor deve larçar uma excessão")
+	@DisplayName("Cadastrar usuario menor de idade")
 	void CadastrarUserMenor() throws Exception {
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			userServi.cadastrar("David Grow", "12345689", "calopsita", 17);
+			userServi.cadastrarUsuario("David Grow", "12345689", "calopsita", 17);
 		}, "Cadastro que não deveria ser realizado, usuario menor de idade, foi realizado");
 
 	}
 
 // testes de login
 	@Test
-	@DisplayName("Logar: Ao logar Deve retornar o objeto do usuário")
+	@DisplayName("Logar com sucesso")
 	void LoginSucesso() throws Exception {
 
-		userServi.cadastrar("Caio de Arruda Miranda", "12345689", "calopsita", 22);
+		userServi.cadastrarUsuario("Caio de Arruda Miranda", "12345689", "calopsita", 22);
 		
 		var usuario = userServi.logar("Caio de Arruda Miranda", "12345689");
 		assertThat(usuario).describedAs("cadastro retornou null").isNotNull();
@@ -83,10 +81,10 @@ class UserServiceTeste {
 	}
 
 	@Test
-	@DisplayName("Logar: Deve retornar exceção caso tente fazer login de usuário sem cadastro.")
+	@DisplayName("Tentar logar sem ter conta cadastrada.")
 	void LoginMalSucedido() throws Exception {
 
-		assertThrows(CadastroUsuariosException.class, () -> {
+		assertThrows(GerenciamentoUsuariosException.class, () -> {
 			userServi.logar("Caio de Arruda Miranda2", "12345689");
 		}, "Exceção que deveria ser lançada ao barrar um login não foi lançada");
 
@@ -95,10 +93,10 @@ class UserServiceTeste {
 // testes de recuperação de senha.
 	
 	@Test
-	@DisplayName("Recuperar: Ao recuperar senha deve retornar o objeto do usuário")
+	@DisplayName("Recuperar senha com sucesso.")
 	void RecuperarSucesso() throws Exception {
 		
-		userServi.cadastrar("Alex Turner2", "abacate", "calopcita", 22);
+		userServi.cadastrarUsuario("Alex Turner2", "abacate", "calopcita", 22);
 
 		var usuario =userServi.recuperarSenha("Alex Turner2", "12345678", "calopcita");
 		
@@ -108,20 +106,20 @@ class UserServiceTeste {
 	}
 	
 	@Test
-	@DisplayName("Recuperar: Ao recuperar sem conta cadastrada deve retornar exceção.")
+	@DisplayName("Tentar recuperar sem conta registrada.")
 	void RecuperarSemConta() throws Exception {
 
-		assertThrows(CadastroUsuariosException.class, () -> {
+		assertThrows(GerenciamentoUsuariosException.class, () -> {
 			userServi.recuperarSenha("Alex Turner3", "12345678", "calopcita");
 		}, "Conta foi tratada como cadastrada, o teste falhou");
 
 	}
 	
 	@Test
-	@DisplayName("Recuperar: Ao recuper com palavra de segurança errada deve retornar exceção.")
+	@DisplayName("Tentar recuperar senha com palavra de segurança errada.")
 	void RecuperarSemPalavra() throws Exception {
 
-		var usuario = userServi.cadastrar("Alex Turner4", "12345678", "calopcita", 22);
+		var usuario = userServi.cadastrarUsuario("Alex Turner4", "12345678", "calopcita", 22);
 
 		assertThrows(IllegalArgumentException.class, () -> {
 			userServi.recuperarSenha("Alex Turner4", "12345678", "cacatua");
@@ -132,23 +130,23 @@ class UserServiceTeste {
 // excluir conta
 	
 	@Test
-	@DisplayName("Excluir: Ao excluir com sucesse deve retornar true")
+	@DisplayName("Excluir conta com sucesso")
 	void ExcluirSucesso() throws Exception {
 		
-		var usuario = userServi.cadastrar("Alex Turner5", "abacate", "calopcita", 22);
+		var usuario = userServi.cadastrarUsuario("Alex Turner5", "abacate", "calopcita", 22);
 
-		Boolean resultado = userServi.excluir(usuario.getId(), "abacate");		
+		Boolean resultado = userServi.excluirUsuario(usuario.getId(), "abacate");		
 		assertThat(resultado).describedAs("Usuario não foi excluido").isTrue();
 
 	}
 	
 	@Test
-	@DisplayName("Excluir: Ao tentar excluir, mas com a senha errada deve retornar false")
+	@DisplayName("Tentar excluir com senha errada")
 	void FalharExcluir() throws Exception {
 		
-		var usuario = userServi.cadastrar("Alex Turner6", "abacate", "calopcita", 22);
+		var usuario = userServi.cadastrarUsuario("Alex Turner6", "abacate", "calopcita", 22);
 
-		Boolean resultado = userServi.excluir(usuario.getId(), "shangrila");		
+		Boolean resultado = userServi.excluirUsuario(usuario.getId(), "shangrila");		
 		assertThat(resultado).describedAs("Metodo retornou que o usuário foi excluido, algo deu errado").isFalse();
 
 	}

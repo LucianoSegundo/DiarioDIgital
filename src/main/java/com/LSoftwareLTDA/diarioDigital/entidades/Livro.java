@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,16 +27,28 @@ public class Livro {
 
     @Column(name = "Tb_Titulo")
     private String titulo;
+    
+    @ManyToOne
+    private Usuario usuario;
 
     @OneToMany
     @JoinColumn(name = "Tb_livro_Capitulo")
     private List<Capitulo> capitulos;
 
-    public Livro(String titulo){
+    public Livro(String titulo, Usuario usuario){
         this.capitulos = new ArrayList<Capitulo>();
         this.titulo = titulo;
+        this.usuario = usuario;
     }
 
+	public Long getId() {
+		return id;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+    
     
 
 }
