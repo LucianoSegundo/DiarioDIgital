@@ -40,6 +40,7 @@ public class Livro {
         this.titulo = titulo;
         this.usuario = usuario;
     }
+    public Livro() {};
 
 	public Long getId() {
 		return id;
