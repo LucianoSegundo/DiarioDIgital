@@ -60,7 +60,7 @@ class LivrosServiceTest {
 		
 		livroServi.criarLivro(titulo, id );
 		
-		assertThrows(GerenciamentoLivroException.class, () ->{
+		assertThrows(CadastroNegadoException.class, () ->{
 			livroServi.criarLivro(titulo, id);
 			}, "Excessão que deveria ser lançada ao tentar criar um livro já criado não foi criado");
 		

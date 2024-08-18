@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
 
 @Repository
-public interface UsuarioRepositorio extends JpaRepository<Usuario, UUID> {
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
 	
 	Optional<Usuario> findByNome(String nome);
 

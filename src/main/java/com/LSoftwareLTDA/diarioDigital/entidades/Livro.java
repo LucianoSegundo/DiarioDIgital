@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +26,8 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "Tb_Titulo")
+    @Column(name = "Tb_Titulo", unique = true)
+    @NotBlank(message = "Titulo de usuário não pode ser nulo")
     private String titulo;
     
     @ManyToOne
@@ -48,6 +50,24 @@ public class Livro {
 
 	public Usuario getUsuario() {
 		return usuario;
+	}
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	public List<Capitulo> getCapitulos() {
+		return capitulos;
+	}
+	public void setCapitulos(List<Capitulo> capitulos) {
+		this.capitulos = capitulos;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
     
     
