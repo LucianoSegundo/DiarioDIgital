@@ -17,7 +17,7 @@ import lombok.Setter;
 public class Capitulo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "Tb_Titulo")
