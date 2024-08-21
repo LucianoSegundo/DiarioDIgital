@@ -16,6 +16,6 @@ public interface LivroRepositorio extends JpaRepository<Livro, Long> {
 	Optional<Livro> findByTituloAndUsuario_id(String titulo, Long id);
 	Optional<Livro> findByIdAndUsuario_id(Long idlivro, Long id);
 	
-	Optional<Page<Livro>> findAllByUsuario_Id(UUID id, Pageable pageable);
+	Optional<Page<Livro>> findAllByUsuario_Id(Long id, Pageable pageable);
 
 }

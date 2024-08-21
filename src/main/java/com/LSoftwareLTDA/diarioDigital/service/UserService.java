@@ -81,7 +81,7 @@ public class UserService {
 
 			return new UsuarioDTO(resposta);
 
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("Não foi possivel encontro usuário");
 		}
 	};
@@ -109,7 +109,7 @@ public class UserService {
 			} else
 				throw new PermissaoNegadaException("Não foi possivel realizar o login");
 
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("não foi possivel realizar login Id do usuario não deve ser null");
 		}
 	};
@@ -132,13 +132,14 @@ public class UserService {
 			} else
 				throw new PermissaoNegadaException("Palavra de segurança não condiz");
 
-		} catch (ConstraintViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new PermissaoNegadaException(e.getMessage());
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
 		}
 	};
-
+	
+	@Transactional
 	public UsuarioDTO recuperarSenha(String nome, String novasenha, String palavra) throws Exception {
 		try {
 			var user = userRepo.findByNome(nome);
@@ -146,9 +147,8 @@ public class UserService {
 			Usuario usuario = user.orElseThrow(
 					() -> new EntidadeNaoEncontrada("Usuario não foi encontrado, substituição de senha cancelada"));
 
-			return trocarSenha(usuario.getId(), novasenha, palavra);
-		} catch (ConstraintViolationException e) {
-			throw new PermissaoNegadaException(e.getMessage());
+			UsuarioDTO resposta = trocarSenha(usuario.getId(), novasenha, palavra);
+			return resposta;
 		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
 		}

@@ -1,10 +1,14 @@
 package com.LSoftwareLTDA.diarioDigital.service;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.LivroDTO;
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
@@ -15,7 +19,6 @@ import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,72 +30,88 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LivrosService {
 
-    private LivroRepositorio livroRepo;
-    private UsuarioRepositorio userRepo;
+	private LivroRepositorio livroRepo;
+	private UsuarioRepositorio userRepo;
 
-    public LivrosService(LivroRepositorio repositorio, UsuarioRepositorio userRepo){
-        this.livroRepo = repositorio;
-        this.userRepo =userRepo;
+	public LivrosService(LivroRepositorio repositorio, UsuarioRepositorio userRepo) {
+		this.livroRepo = repositorio;
+		this.userRepo = userRepo;
 
-    }
-    @Transactional
-    public LivroDTO criarLivro(String titulo, Long idUsuario){
-    		try {
-    			
-    			var entidade = userRepo.findById(idUsuario);
-    			Usuario usuario = entidade.orElseThrow(() -> new EntidadeNaoEncontrada("Usuario não foi encontrado, não é possivel criar um livro"));
-    			Livro novoLivro = new Livro(titulo, usuario);
-    			novoLivro = livroRepo.save(novoLivro);
-    			
-    			return  new LivroDTO(novoLivro);
-				
-			} catch (IllegalArgumentException e) {
-				throw new PermissaoNegadaException("Criação de livro não permitido, atributos não podem ser nulos");
-			} catch(ConstraintViolationException e) {
-				throw new CadastroNegadoException("Criação de livro negada, "+e.getMessage());
+	}
+
+	@Transactional()
+	public LivroDTO criarLivro(String titulo, Long idUsuario) {
+
+		try {
+
+			var entidade = userRepo.findById(idUsuario);
+
+			Usuario usuario = entidade.orElseThrow(
+					() -> new EntidadeNaoEncontrada("Usuario não foi encontrado, não é possivel criar um livro"));
+
+			Livro novoLivro = new Livro(titulo, usuario);
+			List<Livro> lista = usuario.getLivros();
+
+			lista.add(novoLivro);
+			usuario.setLivros(lista);
+			userRepo.save(usuario);
+
+			novoLivro = livroRepo.findByTituloAndUsuario_id(titulo, idUsuario)
+					.orElseThrow(() -> new CadastroNegadoException());
+
+			return new LivroDTO(novoLivro);
+
+		} catch (DataIntegrityViolationException e) {
+			throw new CadastroNegadoException("Livro com este nome já foi cadastrado");
+		} catch (ConstraintViolationException e) {
+			throw new CadastroNegadoException(e.getMessage());
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("Não foi possivel criar livro, id do usuario não pode ser null");
+		}
+
+	};
+
+	@Transactional(readOnly = true)
+	public LivroDTO consultarLivro(String titulo, Long idUsuario) {
+
+		var livro = livroRepo.findByTituloAndUsuario_id(titulo, idUsuario);
+		Livro resposta = livro.orElseThrow(() -> new EntidadeNaoEncontrada("O Livro em questão não foi encontrado"));
+
+		return new LivroDTO(resposta);
+
+	};
+
+	@Transactional()
+	public Boolean excluirLivro(Long id, Long idUsuario, String senha) {
+
+		try {
+			var livro = livroRepo.findByIdAndUsuario_id(id, idUsuario).orElseThrow(
+					() -> new EntidadeNaoEncontrada("Não foi possivel excluir o livro, livro não encontrado"));
+			if (livro.getUsuario().getSenha().equals(senha)) {
+
+				livroRepo.delete(livro);
+				return true;
 			}
-    	
-    };
-    public LivroDTO consultarLivro(String titulo, Long idUsuario) throws Exception{
+			throw new PermissaoNegadaException("senhas não coincidem, login negado");
 
-    	try {
-    		
-    		var livro = livroRepo.findByTituloAndUsuario_id(titulo, idUsuario);
-			Livro resposta = livro.orElseThrow(() -> new EntidadeNaoEncontrada("O Livro em questão não foi encontrado"));
-    	
-			return new LivroDTO(resposta);  
-    		
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("Não foi possivel encontrar o livrp, parametros não podem ser nulos");
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("Não foi possivel excluir o livro, " + e.getMessage());
 		}
-    	
-		
-       };
-    public Boolean excluirLivro(Long id, Long idUsuario, String senha){
-    	
-    	try {
-    	var livro = livroRepo.findByIdAndUsuario_id(id, idUsuario);
-    	livro.orElseThrow(() -> new EntidadeNaoEncontrada("Não foi possivel excluir o livro, livro não encontrado"));
-		
-		livroRepo.delete(livro.get());
-        return true;   
-			
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("Não foi possivel excluir o livro, "+ e.getMessage());
+	};
+
+	@Transactional(readOnly = true)
+	public Page<LivroDTO> listarLivros(Long idUsuario, Pageable pageable) {
+
+		try {
+
+			var livros = livroRepo.findAllByUsuario_Id(idUsuario, pageable);
+			var resposta = livros.orElseThrow(() -> new EntidadeNaoEncontrada("Livros não foram encontrados"));
+
+			return resposta.map(x -> new LivroDTO(x));
+
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("permissão negada " + e.getMessage());
 		}
-    };
-    public Page<LivroDTO> listarLivros(UUID idUsuario, Pageable pageable) {
-    	
-    	try {
- 
-    	var livros = livroRepo.findAllByUsuario_Id(idUsuario, pageable);
-    	var resposta = livros.orElseThrow(() -> new EntidadeNaoEncontrada("Livros não foram encontrados"));
-    	
-        return resposta.map(x -> new LivroDTO(x));
-			
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("permissão negada "+ e.getMessage());		
-		}
-    };
+	};
 
 }

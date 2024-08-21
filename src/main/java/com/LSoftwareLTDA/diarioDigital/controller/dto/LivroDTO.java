@@ -18,7 +18,6 @@ public class LivroDTO {
    private List<Capitulo> capitulos;
 
     public LivroDTO(String titulo, Usuario usuario){
-        this.capitulos = new ArrayList<Capitulo>();
         this.titulo = titulo;
         this.usuario = usuario;
     }
@@ -28,6 +27,30 @@ public class LivroDTO {
         this.usuario = entidade.getUsuario();
         this.id = entidade.getId();
     }
-    public LivroDTO() {};
+    public LivroDTO() {}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	public List<Capitulo> getCapitulos() {
+		return capitulos;
+	}
+	public void setCapitulos(List<Capitulo> capitulos) {
+		this.capitulos = capitulos;
+	};
 
 }

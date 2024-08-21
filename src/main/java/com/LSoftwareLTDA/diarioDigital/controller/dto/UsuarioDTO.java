@@ -22,12 +22,13 @@ public class UsuarioDTO {
 		// TODO Auto-generated constructor stub
 	}
 	  public UsuarioDTO(String nome, String senha, String palavra,int idade){
-	        this.livros = new ArrayList<Livro>();
 	        this.senha = senha;
 	        this.nome = nome;
 	        this.idade = idade;
 	        this.PalavraSegu = palavra;
 	        this.ativo = true;
+	        this.livros = new ArrayList<>();
+
 	    }
 	public UsuarioDTO(Usuario entidade) {
 		this.id= entidade.getId();

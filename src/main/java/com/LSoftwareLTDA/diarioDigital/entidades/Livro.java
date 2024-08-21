@@ -3,6 +3,7 @@ package com.LSoftwareLTDA.diarioDigital.entidades;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ import lombok.Setter;
 public class Livro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "Tb_Titulo", unique = true)
@@ -31,16 +32,16 @@ public class Livro {
     private String titulo;
     
     @ManyToOne
+    @JoinColumn(name = "usuario_Id")
     private Usuario usuario;
 
-    @OneToMany
-    @JoinColumn(name = "Tb_livro_Capitulo")
+    @OneToMany(mappedBy = "livro",cascade = CascadeType.ALL)
     private List<Capitulo> capitulos;
 
     public Livro(String titulo, Usuario usuario){
-        this.capitulos = new ArrayList<Capitulo>();
         this.titulo = titulo;
         this.usuario = usuario;
+        this.capitulos = new ArrayList<>();
     }
     public Livro() {};
 
