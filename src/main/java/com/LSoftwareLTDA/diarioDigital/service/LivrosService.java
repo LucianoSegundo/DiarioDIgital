@@ -66,7 +66,7 @@ public class LivrosService {
 		} catch (ConstraintViolationException e) {
 			throw new CadastroNegadoException(e.getMessage());
 		} catch (InvalidDataAccessApiUsageException e) {
-			throw new PermissaoNegadaException("Não foi possivel criar livro, id do usuario não pode ser null");
+			throw new PermissaoNegadaException("Não foi possivel criar livro, identificador do usuário branco ou nulo");
 		}
 
 	};
