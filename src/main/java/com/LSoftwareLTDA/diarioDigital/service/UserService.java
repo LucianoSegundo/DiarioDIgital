@@ -2,6 +2,8 @@ package com.LSoftwareLTDA.diarioDigital.service;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +45,9 @@ public class UserService {
 			return entidade;
 
 		} catch (DataIntegrityViolationException e) {
-			throw new CadastroNegadoException(e.getMessage());
+			throw new CadastroNegadoException("Usuario já cadastrado");
 		} catch (ConstraintViolationException e) {
-			throw new CadastroNegadoException(e.getMessage());
+			throw new CadastroNegadoException("Parametros necessários estão vazios");
 		}
 
 	};
@@ -65,14 +67,14 @@ public class UserService {
 				throw new PermissaoNegadaException("Não foi permitido a exclussão deste recurso");
 
 		} catch (DataIntegrityViolationException e) {
-			throw new PermissaoNegadaException("Não foi possivel excluir usuario " + e.getMessage());
+			throw new PermissaoNegadaException("Não foi possivel excluir usuario ");
 		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("Não foi possivel excluir usuario id do usuario não pode ser null");
 		}
 	};
 
 	@Transactional(readOnly = true)
-	public UsuarioDTO consultarUsuario(Long id) {
+	public UsuarioDTO consultar(Long id) {
 
 		try {
 			var user = userRepo.findById(id);
@@ -87,7 +89,21 @@ public class UserService {
 	};
 
 	@Transactional(readOnly = true)
-	public UsuarioDTO logar(String nome, String senha) {
+	public Page<UsuarioDTO> consultarUsuarios(PageRequest pagina){
+		
+		var lista = userRepo.findAll(pagina);
+			
+		return lista.map(x -> {
+					UsuarioDTO a = new UsuarioDTO(x);
+					a.setSenha(null);
+					return a;
+		});
+		
+		
+	}
+	
+	@Transactional(readOnly = true)
+ 	public UsuarioDTO logar(String nome, String senha) {
 
 		try {
 			var user = userRepo.findByNome(nome);
@@ -135,7 +151,7 @@ public class UserService {
 		} catch (DataIntegrityViolationException e) {
 			throw new PermissaoNegadaException(e.getMessage());
 		} catch (InvalidDataAccessApiUsageException e) {
-			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
+			throw new PermissaoNegadaException("não foi possivel trocara senha");
 		}
 	};
 	
@@ -150,7 +166,7 @@ public class UserService {
 			UsuarioDTO resposta = trocarSenha(usuario.getId(), novasenha, palavra);
 			return resposta;
 		} catch (InvalidDataAccessApiUsageException e) {
-			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
+			throw new PermissaoNegadaException("não foi possivel trocara senha");
 		}
 	}
 }

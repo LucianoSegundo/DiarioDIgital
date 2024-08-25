@@ -13,7 +13,6 @@ public class ErroPadrao implements Serializable {
 	
 	
 	public ErroPadrao(Instant timestamp, Integer status, String message, String path) {
-		super();
 		this.timestamp = timestamp;
 		this.status = status;
 		this.message = message;
