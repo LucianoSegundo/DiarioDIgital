@@ -68,15 +68,15 @@ public class UsuarioController {
 	}
 	
 	@PutMapping(value ="/trocarSenha/{id}")
-	public ResponseEntity<UsuarioDTO>  trocarSenha(@PathVariable Long id, @RequestBody String palavra, @RequestBody String novaSenha){
+	public ResponseEntity<UsuarioDTO>  trocarSenha(@PathVariable Long id, @RequestBody UsuarioDTO dto){
 		
-		var resposta = userServi.trocarSenha(id, novaSenha, palavra);
+		var resposta = userServi.trocarSenha(id, dto.getNovaSenha(), dto.getPalavraSegu());
 		
 		return ResponseEntity.ok(resposta);
 	}
 	
 	@DeleteMapping(value ="/excluir")
-	public ResponseEntity<Void> deletarUsuario(UsuarioDTO dto){
+	public ResponseEntity<Void> deletarUsuario(@RequestBody UsuarioDTO dto){
 		userServi.excluirUsuario(dto);
 		
 		return ResponseEntity.noContent().build();

@@ -137,7 +137,8 @@ public class UserService {
 			var user = userRepo.findById(id);
 
 			Usuario usuario = user.orElseThrow(() -> new EntidadeNaoEncontrada("Usuario não encontrado"));
-
+			
+			
 			if (usuario.getPalavraSegu().equals(palavra)) {
 
 				// lembrar de criotografar a senha posteriormente;

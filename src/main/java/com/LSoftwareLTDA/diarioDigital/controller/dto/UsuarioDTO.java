@@ -2,7 +2,6 @@ package com.LSoftwareLTDA.diarioDigital.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
@@ -14,8 +13,10 @@ public class UsuarioDTO {
     private String senha;
     private int idade;
     private String PalavraSegu;
+    private String novaSenha;
     private Boolean ativo;
-    private List<Livro> livros;
+    
+private List<Livro> livros;
     
 
 	public UsuarioDTO() {
@@ -81,6 +82,12 @@ public class UsuarioDTO {
 	}
 	public void setLivros(List<Livro> livros) {
 		this.livros = livros;
+	}
+	public String getNovaSenha() {
+		return novaSenha;
+	}
+	public void setNovaSenha(String novaSenha) {
+		this.novaSenha = novaSenha;
 	}
 
 }

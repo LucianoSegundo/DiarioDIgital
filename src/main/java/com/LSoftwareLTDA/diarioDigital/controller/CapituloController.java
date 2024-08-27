@@ -29,7 +29,7 @@ public class CapituloController {
 	}
 
 	@PostMapping(value = "/criar/{userID}")
-	public ResponseEntity<CapituloDTO> criarCapitulo(CapituloDTO dto, @PathVariable Long userID) {
+	public ResponseEntity<CapituloDTO> criarCapitulo(@RequestBody CapituloDTO dto, @PathVariable Long userID) {
 
 		dto.setIdUsuario(userID);
 

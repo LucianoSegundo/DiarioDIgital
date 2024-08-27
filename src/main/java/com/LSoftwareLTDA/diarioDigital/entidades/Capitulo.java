@@ -1,6 +1,7 @@
 package com.LSoftwareLTDA.diarioDigital.entidades;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.CapituloDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,7 @@ public class Capitulo {
     private String conteudo;
     
     @ManyToOne
+    @JsonIgnore
     private Livro livro;
     
     

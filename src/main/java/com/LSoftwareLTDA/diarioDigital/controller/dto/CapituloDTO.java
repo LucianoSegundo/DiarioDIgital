@@ -2,13 +2,7 @@ package com.LSoftwareLTDA.diarioDigital.controller.dto;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Capitulo;
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CapituloDTO {
 
@@ -18,6 +12,7 @@ public class CapituloDTO {
     private Long idLivro;
     private Long idUsuario;
     private String conteudo;
+    @JsonIgnore
     private Livro livro;
 
     public CapituloDTO(Capitulo capitulo) {

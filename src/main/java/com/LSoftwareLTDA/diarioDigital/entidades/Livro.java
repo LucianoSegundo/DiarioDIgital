@@ -3,6 +3,10 @@ package com.LSoftwareLTDA.diarioDigital.entidades;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,12 +31,13 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Tb_Titulo", unique = true)
+    @Column(name = "Tb_Titulo")
     @NotBlank(message = "Titulo de usuário não pode ser nulo")
     private String titulo;
     
     @ManyToOne
     @JoinColumn(name = "usuario_Id")
+    @JsonIgnore
     private Usuario usuario;
 
     @OneToMany(mappedBy = "livro",cascade = CascadeType.ALL)

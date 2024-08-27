@@ -1,20 +1,20 @@
 package com.LSoftwareLTDA.diarioDigital.controller.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Capitulo;
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class LivroDTO {
 
    private Long id;
 
    private String titulo;
-    
+   @JsonIgnore
    private Usuario usuario;
-
+   
    private List<Capitulo> capitulos;
 
     public LivroDTO(String titulo, Usuario usuario){

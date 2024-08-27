@@ -1,7 +1,6 @@
 package com.LSoftwareLTDA.diarioDigital.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -48,7 +47,10 @@ public class LivrosService {
 
 			Usuario usuario = entidade.orElseThrow(
 					() -> new EntidadeNaoEncontrada("Usuario não foi encontrado, não é possivel criar um livro"));
-
+			
+			var livro = livroRepo.findByTituloAndUsuario_id(titulo, idUsuario);
+			if (livro.isPresent()) throw new CadastroNegadoException("Livro com este nome já foi cadastrado para este usuário");
+			
 			Livro novoLivro = new Livro(titulo, usuario);
 			List<Livro> lista = usuario.getLivros();
 
@@ -62,7 +64,7 @@ public class LivrosService {
 			return new LivroDTO(novoLivro);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new CadastroNegadoException("Livro com este nome já foi cadastrado");
+			throw new CadastroNegadoException("Livro com este nome já foi cadastrado para este usuário");
 		} catch (ConstraintViolationException e) {
 			throw new CadastroNegadoException(e.getMessage());
 		} catch (InvalidDataAccessApiUsageException e) {

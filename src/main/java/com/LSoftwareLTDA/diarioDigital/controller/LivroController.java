@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.LivroDTO;
-import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
 import com.LSoftwareLTDA.diarioDigital.service.LivrosService;
 
 @RestController
@@ -49,7 +48,8 @@ public class LivroController {
 			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas,
 			@RequestParam(value = "ordarPor", defaultValue = "titulo") String ordarPor,
-			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem, @PathVariable Long userID) {
+			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem,
+			@PathVariable Long userID) {
 
 		PageRequest pagi = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
