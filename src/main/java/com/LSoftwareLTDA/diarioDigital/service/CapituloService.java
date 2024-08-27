@@ -49,7 +49,7 @@ public class CapituloService {
 
 			return dto;
 		} catch (ConstraintViolationException e) {
-			throw new CadastroNegadoException("cadastro negado");
+			throw new CadastroNegadoException("cadastro negado: " + e.getMessage());
 		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("Não foi possivel criar capitulo, Algum dos identificadores está nulo");
 		}

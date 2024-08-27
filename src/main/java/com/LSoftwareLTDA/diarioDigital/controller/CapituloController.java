@@ -13,14 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.CapituloDTO;
 import com.LSoftwareLTDA.diarioDigital.controller.dto.LivroDTO;
 import com.LSoftwareLTDA.diarioDigital.service.CapituloService;
 
-@RestController
 @RequestMapping(value = "/api/v1/capitulo")
 public class CapituloController {
 
@@ -30,17 +28,13 @@ public class CapituloController {
 		this.capServi = capServi;
 	}
 
-	@PostMapping(value = "/{userID}/{livroID}")
-	public ResponseEntity<CapituloDTO> criarCapitulo(@RequestBody CapituloDTO dto, @PathVariable Long userID, @PathVariable Long livroID) {
+	@PostMapping(value = "/criar/{userID}")
+	public ResponseEntity<CapituloDTO> criarCapitulo(@RequestBody CapituloDTO dto, @PathVariable Long userID) {
 
 		dto.setIdUsuario(userID);
-		dto.setIdLivro(livroID);
 
 		var resultado = capServi.criarCapitulo(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}")
-				.buildAndExpand(resultado.getId())
-				.toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(dto.getId()).toUri();
 
 		return ResponseEntity.created(uri).body(dto);
 	}
@@ -62,24 +56,18 @@ public class CapituloController {
 		return ResponseEntity.ok(resultado);
 	}
 
-	@GetMapping(value ="/{userID}/{livroID}/{id}")
-	public ResponseEntity<CapituloDTO>consultarCapitulo(@PathVariable Long userID,@PathVariable Long livroID, @PathVariable Long id){
-		CapituloDTO dto = new CapituloDTO();
-		dto.setId(id);
-		dto.setIdLivro(livroID);
-		dto.setIdUsuario(userID);
+	@GetMapping(value ="/{userID}")
+	public ResponseEntity<CapituloDTO>consultarCapitulo(@PathVariable Long userID, @RequestBody CapituloDTO dto){
+		
 		var resultado = capServi.consultarCapitulo(dto);
 		
 		return ResponseEntity.ok(resultado);
 	}
 	
-	@DeleteMapping(value = "/deletar/{userID}/{livroID}/{id}")
-	public ResponseEntity<Void> deletarCapitulo(@PathVariable Long userID,@PathVariable Long livroID, @PathVariable Long id) {
-		CapituloDTO dto = new CapituloDTO();
-		dto.setId(id);
-		dto.setIdLivro(livroID);
+	@DeleteMapping(value = "/deletar/{userID}")
+	public ResponseEntity<Void> deletarCapitulo(@RequestBody CapituloDTO dto, @PathVariable Long userID) {
+
 		dto.setIdUsuario(userID);
-		
 		capServi.excluirCapitulo(dto);
 
 		return ResponseEntity.noContent().build();
