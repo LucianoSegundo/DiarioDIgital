@@ -10,9 +10,9 @@ public class UsuarioDTO {
 
     private Long id;
     private String nome;
-    private String senha;
     private int idade;
-    private String PalavraSegu;
+    private String senha;
+    private String PalavraSegu;    
     private String novaSenha;
     private Boolean ativo;
     

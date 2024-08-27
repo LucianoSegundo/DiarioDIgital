@@ -29,15 +29,15 @@ public class LivroController {
 		this.livroServi = livroServi;
 	}
 
-	@PostMapping(value = "/criar/{userID}")
+	@PostMapping(value = "/{userID}")
 	public ResponseEntity<LivroDTO> criarLivro(@RequestBody LivroDTO dto, @PathVariable Long userID) {
 
 		var resposta = livroServi.criarLivro(dto.getTitulo(), userID);
 
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
-				.path("{id}")
-				.buildAndExpand(dto.getId())
+				.path("/{id}")
+				.buildAndExpand(resposta.getId())
 				.toUri();
 
 		return ResponseEntity.created(uri).body(resposta);
@@ -58,18 +58,18 @@ public class LivroController {
 		return ResponseEntity.ok(resultado);
 	}
 
-	@GetMapping(value ="/{userID}")
-	public ResponseEntity<LivroDTO>consultarLivro(@PathVariable Long userID, @RequestBody LivroDTO dto){
+	@GetMapping(value ="/{userID}/{id}")
+	public ResponseEntity<LivroDTO>consultarLivro(@PathVariable Long userID, @PathVariable Long id){
 		
-		var resultado = livroServi.consultarLivro(dto.getTitulo(),userID);
+		var resultado = livroServi.consultarLivro(id,userID);
 		
 		return ResponseEntity.ok(resultado);
 	}
 	
-	@DeleteMapping(value = "/deletar/{userID}")
-	public ResponseEntity<Void> deletarLivro(@RequestBody LivroDTO dto, @PathVariable Long userID) {
+	@DeleteMapping(value = "/deletar/{userID}/{id}")
+	public ResponseEntity<Void> deletarLivro(@RequestBody LivroDTO dto, @PathVariable Long userID, @PathVariable Long id) {
 
-		livroServi.excluirLivro(dto.getId(), userID, dto.getTitulo());
+		livroServi.excluirLivro(id, userID, dto.getSenha());
 
 		return ResponseEntity.noContent().build();
 	}

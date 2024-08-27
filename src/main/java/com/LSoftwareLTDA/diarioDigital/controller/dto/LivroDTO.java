@@ -10,12 +10,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class LivroDTO {
 
    private Long id;
-
    private String titulo;
+   private String senha;
+   
+   private List<Capitulo> capitulos;   
+   
    @JsonIgnore
    private Usuario usuario;
-   
-   private List<Capitulo> capitulos;
 
     public LivroDTO(String titulo, Usuario usuario){
         this.titulo = titulo;
@@ -28,6 +29,7 @@ public class LivroDTO {
         this.id = entidade.getId();
     }
     public LivroDTO() {}
+    
 	public Long getId() {
 		return id;
 	}
@@ -51,6 +53,13 @@ public class LivroDTO {
 	}
 	public void setCapitulos(List<Capitulo> capitulos) {
 		this.capitulos = capitulos;
+	}
+	public String getSenha() {
+		return senha;
+	}
+	public void setSenha(String senha) {
+		this.senha = senha;
 	};
+	
 
 }
