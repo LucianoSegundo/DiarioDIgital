@@ -74,9 +74,9 @@ public class LivrosService {
 	};
 
 	@Transactional(readOnly = true)
-	public LivroDTO consultarLivro(String titulo, Long idUsuario) {
+	public LivroDTO consultarLivro(Long idlivro, Long idUsuario) {
 
-		var livro = livroRepo.findByTituloAndUsuario_id(titulo, idUsuario);
+		var livro = livroRepo.findByIdAndUsuario_id(idlivro, idUsuario);
 		Livro resposta = livro.orElseThrow(() -> new EntidadeNaoEncontrada("O Livro em questão não foi encontrado"));
 
 		return new LivroDTO(resposta);

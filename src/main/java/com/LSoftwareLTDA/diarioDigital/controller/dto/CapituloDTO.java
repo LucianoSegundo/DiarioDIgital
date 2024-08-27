@@ -9,9 +9,11 @@ public class CapituloDTO {
 	private Long id;
     private String titulo;
     private int numeroCapitulo;
+    private String conteudo;
+    
     private Long idLivro;
     private Long idUsuario;
-    private String conteudo;
+    
     @JsonIgnore
     private Livro livro;
 
@@ -31,7 +33,6 @@ public class CapituloDTO {
 
     }
 	public CapituloDTO() {
-		// TODO Auto-generated constructor stub
 	}
 	public Long getId() {
 		return id;

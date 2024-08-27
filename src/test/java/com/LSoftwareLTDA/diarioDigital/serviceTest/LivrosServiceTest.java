@@ -89,8 +89,8 @@ class LivrosServiceTest {
 		UsuarioDTO usuario = criacaoUsuario("Caio5");
 		String titulo = "Meia noite eu te conto 4 e a guerra dos clones";
 		
-		livroServi.criarLivro(titulo, usuario.getId());
-		LivroDTO livro = livroServi.consultarLivro(titulo, usuario.getId());
+		var dto =livroServi.criarLivro(titulo, usuario.getId());
+		LivroDTO livro = livroServi.consultarLivro(dto.getId(), usuario.getId());
 
 		assertThat(livro).describedAs("Livro retornou nulo").isNotNull();
 		excluirUsuario(usuario);
@@ -105,7 +105,7 @@ class LivrosServiceTest {
 		String titulo = "Meia noite eu te conto 5 o imperio contra ataca";
 
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			livroServi.consultarLivro(titulo, usuario.getId());
+			livroServi.consultarLivro(7934l, usuario.getId());
 		}, "Excessão que deveria ser lançada ao tentar criar um livro já criado não foi criado");
 		excluirUsuario(usuario);
 
@@ -116,9 +116,9 @@ class LivrosServiceTest {
 	void consultarLivroIdUsuarioNull() {
 
 		String titulo = "Meia noite eu te conto6 a era de ultron";
-
+		
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			livroServi.consultarLivro(titulo, new UsuarioDTO().getId());
+			livroServi.consultarLivro(1l, new UsuarioDTO().getId());
 		}, "Excessão que deveria ser lançada ao tentar consultar um livro com id de usuario null não foi lançada");
 
 	}
