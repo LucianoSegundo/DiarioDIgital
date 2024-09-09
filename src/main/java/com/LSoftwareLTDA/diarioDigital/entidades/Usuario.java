@@ -2,10 +2,10 @@ package com.LSoftwareLTDA.diarioDigital.entidades;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,19 +37,18 @@ public class Usuario {
 
     private Boolean ativo;
     
-
-    @OneToMany
+    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL)
     private List<Livro> livros;
     
     public Usuario() {} 
     
     public Usuario(String nome, String senha, String palavra,int idade){
-        this.livros = new ArrayList<Livro>();
         this.senha = senha;
         this.nome = nome;
         this.idade = idade;
         this.PalavraSegu = palavra;
         this.ativo = true;
+        this.livros = new ArrayList<>();
     }
     
     public Usuario(UsuarioDTO entidade) {
@@ -60,6 +59,7 @@ public class Usuario {
 		this.PalavraSegu = entidade.getPalavraSegu();
 		this.ativo = entidade.getAtivo();
 		this.livros = entidade.getLivros();
+        this.livros = entidade.getLivros();
 	}
 	
     //get e seter adicionado pelo fato do eclipse não suportar lombok nativamente.

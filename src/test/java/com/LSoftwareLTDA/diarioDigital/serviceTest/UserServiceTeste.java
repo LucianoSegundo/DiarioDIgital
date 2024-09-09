@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
+import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
 import com.LSoftwareLTDA.diarioDigital.service.UserService;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
@@ -33,12 +34,10 @@ class UserServiceTeste {
 	void CadastrarUserSucesso() throws Exception {
 		
 		UsuarioDTO dto = new UsuarioDTO("Noel Gallager", "12345689", "calopsita", 22);
-
 		var usuario = userServi.cadastrarUsuario(dto);
-		assertThat(usuario).describedAs("usuario retornou null").isNotNull();
 		
-
-
+		assertThat(usuario).describedAs("usuario retornou null").isNotNull();
+		excluirUsuario(usuario);
 
 	}
 
@@ -47,12 +46,12 @@ class UserServiceTeste {
 	void CadastrarUserCadastrado() throws Exception {
 
 		UsuarioDTO dto = new UsuarioDTO("Alex Turner", "12345689", "calopsita", 22);
-
 		var usuario = userServi.cadastrarUsuario(dto);
 		
 		assertThrows(CadastroNegadoException.class, () -> {
 			userServi.cadastrarUsuario(dto);
 		}, "Usuário que já estava cadastrado não foi barrada ao tentar se cadastrar");
+		excluirUsuario(usuario);
 
 	}
 	
@@ -72,13 +71,14 @@ class UserServiceTeste {
 	@Test
 	@DisplayName("Logar com sucesso")
 	void LoginSucesso() throws Exception {
+		
 		UsuarioDTO dto = new UsuarioDTO("Caio de Arruda Miranda", "12345689", "calopsita", 22);
-
-		userServi.cadastrarUsuario(dto);
-		
+		dto = userServi.cadastrarUsuario(dto);
 		var usuario = userServi.logar("Caio de Arruda Miranda", "12345689");
-		assertThat(usuario).describedAs("cadastro retornou null").isNotNull();
 		
+		assertThat(usuario).describedAs("cadastro retornou null").isNotNull();
+		excluirUsuario(dto);
+
 	}
 
 	@Test
@@ -97,14 +97,14 @@ class UserServiceTeste {
 	@Test
 	@DisplayName("Recuperar senha com sucesso.")
 	void RecuperarSucesso() throws Exception {
+		
 		UsuarioDTO dto = new UsuarioDTO("Alex Turner2", "abacate", "calopcita", 22);
-
 		userServi.cadastrarUsuario(dto);
-
-		var usuario =userServi.recuperarSenha("Alex Turner2", "12345678", "calopcita");
+		var usuario = userServi.recuperarSenha("Alex Turner2", "12345678", "calopcita");
 		
 		assertThat(usuario).describedAs("usuario retornol como nulo").isNotNull();
 		assertThat(usuario.getSenha()).describedAs("senha não retornou igual a nova senha").isEqualTo("12345678");
+		excluirUsuario(usuario);
 
 	}
 	
@@ -124,11 +124,12 @@ class UserServiceTeste {
 
 		UsuarioDTO dto = new UsuarioDTO("Alex Turner4", "12345678", "calopcita", 22);
 
-		userServi.cadastrarUsuario(dto);
+		dto = userServi.cadastrarUsuario(dto);
 
 		assertThrows(PermissaoNegadaException.class, () -> {
 			userServi.recuperarSenha("Alex Turner4", "12345678", "cacatua");
 		}, " palavra de segurança foi tratada como correta, teste falhou");
+		excluirUsuario(dto);
 
 	}
 	
@@ -154,13 +155,16 @@ class UserServiceTeste {
 		
 		UsuarioDTO usuario = new UsuarioDTO("Alex Turner6", "abacate", "calopcita", 22);
 
-		
 		var usuario2  =userServi.cadastrarUsuario(usuario);
 		 usuario2.setSenha("111111111111111111111111111111111111111111");
 		assertThrows(PermissaoNegadaException.class, ()->{
 			userServi.excluirUsuario(usuario2);		
 			
 		});
+		
+		 usuario2.setSenha("abacate");
+		excluirUsuario(usuario2);
+
 		
 	}
 	@Test
@@ -176,6 +180,13 @@ class UserServiceTeste {
 			userServi.excluirUsuario(usuario);		
 			
 		});
+		excluirUsuario(usuario2);
+	}
+	
+	
+	private void excluirUsuario(UsuarioDTO usuario) {
+
+		 userServi.excluirUsuario(usuario);
 	}
 
 	

@@ -1,24 +1,24 @@
 package com.LSoftwareLTDA.diarioDigital.controller.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Capitulo;
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class LivroDTO {
 
    private Long id;
-
    private String titulo;
-    
+   private String senha;
+   
+   private List<Capitulo> capitulos;   
+   
+   @JsonIgnore
    private Usuario usuario;
 
-   private List<Capitulo> capitulos;
-
     public LivroDTO(String titulo, Usuario usuario){
-        this.capitulos = new ArrayList<Capitulo>();
         this.titulo = titulo;
         this.usuario = usuario;
     }
@@ -28,6 +28,38 @@ public class LivroDTO {
         this.usuario = entidade.getUsuario();
         this.id = entidade.getId();
     }
-    public LivroDTO() {};
+    public LivroDTO() {}
+    
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getTitulo() {
+		return titulo;
+	}
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	public List<Capitulo> getCapitulos() {
+		return capitulos;
+	}
+	public void setCapitulos(List<Capitulo> capitulos) {
+		this.capitulos = capitulos;
+	}
+	public String getSenha() {
+		return senha;
+	}
+	public void setSenha(String senha) {
+		this.senha = senha;
+	};
+	
 
 }

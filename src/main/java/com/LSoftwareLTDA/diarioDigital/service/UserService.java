@@ -2,6 +2,8 @@ package com.LSoftwareLTDA.diarioDigital.service;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +45,9 @@ public class UserService {
 			return entidade;
 
 		} catch (DataIntegrityViolationException e) {
-			throw new CadastroNegadoException(e.getMessage());
+			throw new CadastroNegadoException("Usuario já cadastrado");
 		} catch (ConstraintViolationException e) {
-			throw new CadastroNegadoException(e.getMessage());
+			throw new CadastroNegadoException("Parametros necessários estão vazios");
 		}
 
 	};
@@ -65,29 +67,43 @@ public class UserService {
 				throw new PermissaoNegadaException("Não foi permitido a exclussão deste recurso");
 
 		} catch (DataIntegrityViolationException e) {
-			throw new PermissaoNegadaException("Não foi possivel excluir usuario " + e.getMessage());
+			throw new PermissaoNegadaException("Não foi possivel excluir usuario ");
 		} catch (InvalidDataAccessApiUsageException e) {
 			throw new PermissaoNegadaException("Não foi possivel excluir usuario id do usuario não pode ser null");
 		}
 	};
 
 	@Transactional(readOnly = true)
-	public UsuarioDTO consultarUsuario(Long id) {
+	public UsuarioDTO consultar(Long id) {
 
 		try {
 			var user = userRepo.findById(id);
 			Usuario resposta = user
-					.orElseThrow(() -> new EntidadeNaoEncontrada("A entidade em questão não foi encontrada"));
+					.orElseThrow(() -> new EntidadeNaoEncontrada("A Usuario não foi encontrado"));
 
 			return new UsuarioDTO(resposta);
 
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("Não foi possivel encontro usuário");
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("Operação de consulta não foi permitida");
 		}
 	};
 
 	@Transactional(readOnly = true)
-	public UsuarioDTO logar(String nome, String senha) {
+	public Page<UsuarioDTO> consultarUsuarios(PageRequest pagina){
+		
+		var lista = userRepo.findAll(pagina);
+			
+		return lista.map(x -> {
+					UsuarioDTO a = new UsuarioDTO(x);
+					a.setSenha(null);
+					return a;
+		});
+		
+		
+	}
+	
+	@Transactional(readOnly = true)
+ 	public UsuarioDTO logar(String nome, String senha) {
 
 		try {
 			var user = userRepo.findByNome(nome);
@@ -95,7 +111,7 @@ public class UserService {
 			// Lembrar de descriptografar a senha antes da comparação.
 
 			Usuario usuario = user
-					.orElseThrow(() -> new EntidadeNaoEncontrada("Não foi encontrado usuario com este nome"));
+					.orElseThrow(() -> new EntidadeNaoEncontrada("Usuario com tau nome não foi encontrado"));
 			String senhaSalva = usuario.getSenha();
 
 			if (senhaSalva.equals(senha)) {
@@ -107,10 +123,10 @@ public class UserService {
 				return resposta;
 
 			} else
-				throw new PermissaoNegadaException("Não foi possivel realizar o login");
+				throw new PermissaoNegadaException("Acesso negado");
 
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("não foi possivel realizar login Id do usuario não deve ser null");
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("Acesso negado, o nome do usuarío se em encontra branco ou nulo");
 		}
 	};
 
@@ -120,8 +136,9 @@ public class UserService {
 		try {
 			var user = userRepo.findById(id);
 
-			Usuario usuario = user.orElseThrow(() -> new EntidadeNaoEncontrada("Usuario não foi encontrado"));
-
+			Usuario usuario = user.orElseThrow(() -> new EntidadeNaoEncontrada("Usuario não encontrado"));
+			
+			
 			if (usuario.getPalavraSegu().equals(palavra)) {
 
 				// lembrar de criotografar a senha posteriormente;
@@ -130,27 +147,27 @@ public class UserService {
 				return resposta;
 
 			} else
-				throw new PermissaoNegadaException("Palavra de segurança não condiz");
+				throw new PermissaoNegadaException("Acesso negado, troca de senha não permitida");
 
-		} catch (ConstraintViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new PermissaoNegadaException(e.getMessage());
-		} catch (IllegalArgumentException e) {
-			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
+		} catch (InvalidDataAccessApiUsageException e) {
+			throw new PermissaoNegadaException("não foi possivel trocara senha");
 		}
 	};
-
+	
+	@Transactional
 	public UsuarioDTO recuperarSenha(String nome, String novasenha, String palavra) throws Exception {
 		try {
 			var user = userRepo.findByNome(nome);
 
 			Usuario usuario = user.orElseThrow(
-					() -> new EntidadeNaoEncontrada("Usuario não foi encontrado, substituição de senha cancelada"));
+					() -> new EntidadeNaoEncontrada("Usuario não encontrado"));
 
-			return trocarSenha(usuario.getId(), novasenha, palavra);
-		} catch (ConstraintViolationException e) {
-			throw new PermissaoNegadaException(e.getMessage());
+			UsuarioDTO resposta = trocarSenha(usuario.getId(), novasenha, palavra);
+			return resposta;
 		} catch (InvalidDataAccessApiUsageException e) {
-			throw new PermissaoNegadaException("não foi possivel trocara senha" + e.getMessage());
+			throw new PermissaoNegadaException("não foi possivel trocara senha");
 		}
 	}
 }

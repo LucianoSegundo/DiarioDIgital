@@ -2,7 +2,6 @@ package com.LSoftwareLTDA.diarioDigital.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
@@ -11,23 +10,26 @@ public class UsuarioDTO {
 
     private Long id;
     private String nome;
-    private String senha;
     private int idade;
-    private String PalavraSegu;
+    private String senha;
+    private String PalavraSegu;    
+    private String novaSenha;
     private Boolean ativo;
-    private List<Livro> livros;
+    
+private List<Livro> livros;
     
 
 	public UsuarioDTO() {
 		// TODO Auto-generated constructor stub
 	}
 	  public UsuarioDTO(String nome, String senha, String palavra,int idade){
-	        this.livros = new ArrayList<Livro>();
 	        this.senha = senha;
 	        this.nome = nome;
 	        this.idade = idade;
 	        this.PalavraSegu = palavra;
 	        this.ativo = true;
+	        this.livros = new ArrayList<>();
+
 	    }
 	public UsuarioDTO(Usuario entidade) {
 		this.id= entidade.getId();
@@ -80,6 +82,12 @@ public class UsuarioDTO {
 	}
 	public void setLivros(List<Livro> livros) {
 		this.livros = livros;
+	}
+	public String getNovaSenha() {
+		return novaSenha;
+	}
+	public void setNovaSenha(String novaSenha) {
+		this.novaSenha = novaSenha;
 	}
 
 }
