@@ -3,8 +3,6 @@ package com.LSoftwareLTDA.diarioDigital.serviceTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +11,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.CapituloDTO;
-import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.livro.response.LivroResponse;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.CadastroRequest;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.resposta.UsuarioResponse;
 import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
 import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
 import com.LSoftwareLTDA.diarioDigital.service.CapituloService;
+import com.LSoftwareLTDA.diarioDigital.service.LivrosService;
 import com.LSoftwareLTDA.diarioDigital.service.UserService;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
@@ -34,6 +35,12 @@ class CapituloServiceTest {
 
 	@Autowired
 	private UserService userServi;
+	
+	@Autowired
+	private LivrosService livroServi;
+	
+	
+	private String senha = "1234";
 
 	@Test
 	@DisplayName("Criar capitulos com sucesso")
@@ -240,31 +247,25 @@ class CapituloServiceTest {
 	
 	
 	private Livro criacaoLivro(String nome, String livro) {
-		UsuarioDTO dto = new UsuarioDTO(nome, "1234", "jaguatirica", 18);
+		CadastroRequest request = new CadastroRequest(nome, "1234", "jaguatirica", 18);
 		
-		dto = userServi.cadastrarUsuario(dto);
+		UsuarioResponse respos = userServi.cadastrarUsuario(request);
 		
-		Usuario usuario = new Usuario(dto);
+		LivroResponse dto = livroServi.criarLivro(livro, respos.id());
 		
-		Livro li = new Livro(livro, usuario);
+		Usuario user =new Usuario(request);
+		user.setId(respos.id());
 		
-		List<Livro> livros= usuario.getLivros();
+		Livro resposta = new Livro(dto);
+		resposta.setUsuario(user);
 		
-		livros.add(li);
-		
-		usuario.setLivros(livros);
-		
-		dto = new UsuarioDTO(usuario);
-		
-		dto = userServi.cadastrarUsuario(dto);
-		
-		return  dto.getLivros().get(0);
+		return  resposta;
 		
 	}
 
 	private void excluirUsuario(Usuario usuario) {
-
-		userServi.excluirUsuario(new UsuarioDTO(usuario));
+		
+		userServi.excluirUsuario(usuario.getId(), senha);
 	}
 
 }

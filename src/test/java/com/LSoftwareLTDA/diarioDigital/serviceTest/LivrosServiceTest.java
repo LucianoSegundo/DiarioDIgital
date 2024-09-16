@@ -10,10 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.LSoftwareLTDA.diarioDigital.controller.dto.LivroDTO;
-import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
-import com.LSoftwareLTDA.diarioDigital.entidades.Livro;
-import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.livro.response.LivroResponse;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.CadastroRequest;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.resposta.UsuarioResponse;
 import com.LSoftwareLTDA.diarioDigital.service.LivrosService;
 import com.LSoftwareLTDA.diarioDigital.service.UserService;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
@@ -31,31 +30,35 @@ class LivrosServiceTest {
 
 	@Autowired
 	UserService userServi;
+	
+	private String senha = "1234";
 
 	@Test
 	@DisplayName("Criando livro com sucesso")
 	void criarLivroSucesso() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio3");
-		var livro = livroServi.criarLivro("Meia noite eu te conto", usuario.getId());
+		UsuarioResponse usuario = criacaoUsuario("Caio3");
+		var livro = livroServi.criarLivro("Meia noite eu te conto", usuario.id());
 
 		assertThat(livro).describedAs("Livro retornou nulo").isNotNull();
-		userServi.excluirUsuario(usuario);
+
+		excluirUsuario(usuario.id());
+
 	}
 
 	@Test
 	@DisplayName("Tentar criando livro que já foi criado")
 	void criarLivroCriado() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio4");
+		UsuarioResponse usuario = criacaoUsuario("Caio4");
 		String titulo = "Meia noite eu te conto2 o inimigo agora é outro";
-		livroServi.criarLivro(titulo, usuario.getId());
+		livroServi.criarLivro(titulo, usuario.id());
 
 		assertThrows(CadastroNegadoException.class, () -> {
-			livroServi.criarLivro(titulo, usuario.getId());
+			livroServi.criarLivro(titulo, usuario.id());
 		}, "Deveria ter lançado CadastroNegadoException");
-		excluirUsuario(usuario);
-		
+
+		excluirUsuario(usuario.id());
 
 	}
 
@@ -70,6 +73,7 @@ class LivrosServiceTest {
 		}, "Devido ao id null deveria ter lançado PermissaoNegadaException");
 
 	}
+
 	@Test
 	@DisplayName("Tentar criando livro com id de usuario não cadastrado")
 	void criarLivroIdUsuarioInexistente() {
@@ -86,14 +90,15 @@ class LivrosServiceTest {
 	@DisplayName("Consultar livro com sucesso")
 	void consultarLivroSucesso() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio5");
+		UsuarioResponse usuario =  criacaoUsuario("Caio5");
 		String titulo = "Meia noite eu te conto 4 e a guerra dos clones";
-		
-		var dto =livroServi.criarLivro(titulo, usuario.getId());
-		LivroDTO livro = livroServi.consultarLivro(dto.getId(), usuario.getId());
+
+		LivroResponse resposta = livroServi.criarLivro(titulo, usuario.id());
+		LivroResponse livro = livroServi.consultarLivro(resposta.id(), usuario.id());
 
 		assertThat(livro).describedAs("Livro retornou nulo").isNotNull();
-		excluirUsuario(usuario);
+		excluirUsuario(usuario.id());
+
 	}
 
 	@Test
@@ -101,13 +106,12 @@ class LivrosServiceTest {
 
 	void consultarLivroNaoCadastrado() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio6");
-		String titulo = "Meia noite eu te conto 5 o imperio contra ataca";
+		UsuarioResponse usuario =  criacaoUsuario("Caio6");
 
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			livroServi.consultarLivro(7934l, usuario.getId());
+			livroServi.consultarLivro(7934l, usuario.id());
 		}, "Excessão que deveria ser lançada ao tentar criar um livro já criado não foi criado");
-		excluirUsuario(usuario);
+		excluirUsuario(usuario.id());
 
 	}
 
@@ -115,10 +119,8 @@ class LivrosServiceTest {
 	@DisplayName("Tentar consultar livro com id de usuario null")
 	void consultarLivroIdUsuarioNull() {
 
-		String titulo = "Meia noite eu te conto6 a era de ultron";
-		
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			livroServi.consultarLivro(1l, new UsuarioDTO().getId());
+			livroServi.consultarLivro(1l, null);
 		}, "Excessão que deveria ser lançada ao tentar consultar um livro com id de usuario null não foi lançada");
 
 	}
@@ -127,53 +129,55 @@ class LivrosServiceTest {
 	@DisplayName("Excluir livro com sucesso")
 	void excluirSucesso() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio7");
-		var livro = livroServi.criarLivro("Meia noite eu te conto6 new vegas", usuario.getId());
-		Boolean resultado = livroServi.excluirLivro(livro.getId(), usuario.getId(), usuario.getSenha());
+		UsuarioResponse usuario =  criacaoUsuario("Caio7");
+		LivroResponse livro = livroServi.criarLivro("Meia noite eu te conto6 new vegas", usuario.id());
+		Boolean resultado = livroServi.excluirLivro(livro.id(), usuario.id(), senha);
 
 		assertThat(resultado).describedAs("Usuario não foi excluido").isTrue();
-		
-		excluirUsuario(usuario);
+
+		excluirUsuario(usuario.id());
+
 	}
 
 	@Test
 	@DisplayName("Excluir livro com id de usuario null")
 	void excluirLivroUsuarioNull() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio8");
-		var livro = livroServi.criarLivro("Meia noite eu te conto8 não lembro de mais nenhum nome de filme",
-				usuario.getId());
+		UsuarioResponse usuario =  criacaoUsuario("Caio8");
+		LivroResponse livro = livroServi.criarLivro("Meia noite eu te conto8 não lembro de mais nenhum nome de filme",
+				usuario.id());
 
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			livroServi.excluirLivro(livro.getId(), null, usuario.getSenha());
+			livroServi.excluirLivro(livro.id(), null, senha);
 		}, "exceção de entidade não encontrada não foi lançada");
-		
-		excluirUsuario(usuario);
+
+		excluirUsuario(usuario.id());
+
 	}
 
 	@Test
 	@DisplayName("Excluir livro com senha null")
 	void excluirSsenhaNull() {
 
-		UsuarioDTO usuario = criacaoUsuario("Caio10");
-		var livro = livroServi.criarLivro("Meia noite eu te conto9 ainda não tenho trocadilho novo", usuario.getId());
+		UsuarioResponse usuario =  criacaoUsuario("Caio10");
+		LivroResponse livro = livroServi.criarLivro("Meia noite eu te conto9 ainda não tenho trocadilho novo", usuario.id());
 
 		assertThrows(PermissaoNegadaException.class, () -> {
-			livroServi.excluirLivro(livro.getId(), usuario.getId(), null);
+			livroServi.excluirLivro(livro.id(), usuario.id(), null);
 		}, "exceção de entidade não encontrada não foi lançada");
-		
-		excluirUsuario(usuario);
+
+		excluirUsuario(usuario.id());
+
 	}
 
-	private UsuarioDTO criacaoUsuario(String nome) {
-		UsuarioDTO dto = new UsuarioDTO(nome, "1234", "jaguatirica", 18);
+	private UsuarioResponse criacaoUsuario(String nome) {
+		CadastroRequest request =  new CadastroRequest(nome, senha, "jaguatirica", 18);
 
-		return userServi.cadastrarUsuario(dto);
+		return userServi.cadastrarUsuario(request);
 	}
 
-	private void excluirUsuario(UsuarioDTO usuario) {
-
-		userServi.excluirUsuario(usuario);
+	private void excluirUsuario(Long id) {
+		userServi.excluirUsuario(id, "1234");
 	}
 
 }

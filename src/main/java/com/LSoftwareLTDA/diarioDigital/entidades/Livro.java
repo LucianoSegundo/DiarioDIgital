@@ -3,9 +3,8 @@ package com.LSoftwareLTDA.diarioDigital.entidades;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.livro.response.LivroResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,6 +46,13 @@ public class Livro {
         this.titulo = titulo;
         this.usuario = usuario;
         this.capitulos = new ArrayList<>();
+    }
+    
+   
+    public Livro(LivroResponse entidade){
+    	this.id =entidade.id();
+        this.titulo = entidade.titulo();
+        this.capitulos = new ArrayList<Capitulo>();
     }
     public Livro() {};
 

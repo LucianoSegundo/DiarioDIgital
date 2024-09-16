@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException;
+import com.LSoftwareLTDA.diarioDigital.service.excecoes.TokenInvalido;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -48,6 +49,20 @@ public class ControllerExceptionHendler {
 	public ResponseEntity<ErroPadrao> permissaoNegada(PermissaoNegadaException e, HttpServletRequest request){
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
+		ErroPadrao erro = new ErroPadrao(
+				Instant.now(),
+				status.value(),
+				e.getMessage(),
+				request.getRequestURI());
+		
+		return ResponseEntity.status(status).body(erro);
+
+	}
+	
+	@ExceptionHandler(TokenInvalido.class)
+	public ResponseEntity<ErroPadrao> tokenInvalido(TokenInvalido e, HttpServletRequest request){
+		
+		HttpStatus status = HttpStatus.FORBIDDEN;
 		ErroPadrao erro = new ErroPadrao(
 				Instant.now(),
 				status.value(),

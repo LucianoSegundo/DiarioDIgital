@@ -3,6 +3,7 @@ package com.LSoftwareLTDA.diarioDigital.service;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import com.LSoftwareLTDA.diarioDigital.repositorios.UsuarioRepositorio;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException;
+import com.LSoftwareLTDA.diarioDigital.service.excecoes.TokenInvalido;
 
 import jakarta.validation.ConstraintViolationException;
 
@@ -23,10 +25,12 @@ public class CapituloService {
 
 	private LivroRepositorio livroRepp;
 	private CapituloRepositorio capRepo;
+	private UsuarioRepositorio userRepo;
 
-	public CapituloService(UsuarioRepositorio repositorio, LivroRepositorio livroRepo, CapituloRepositorio capRepo) {
+	public CapituloService(UsuarioRepositorio repositorio, LivroRepositorio livroRepo, CapituloRepositorio capRepo, UsuarioRepositorio userRepo) {
 		this.livroRepp = livroRepo;
 		this.capRepo = capRepo;
+		this.userRepo = userRepo;
 
 	}
 
@@ -98,6 +102,48 @@ public class CapituloService {
 
 		return resposta.map(x -> new CapituloDTO(x));
 
+	};
+	
+	
+	public CapituloDTO setarParametros(JwtAuthenticationToken token, Long idLivro) {
+		Long idToken = Long.parseLong(token.getName());
+
+		if(userRepo.existsById(idToken)) {
+			CapituloDTO dto = new CapituloDTO();
+			dto.setIdUsuario(idToken);
+			dto.setIdLivro(idLivro);
+			return dto;
+		} 
+		else
+			throw new TokenInvalido("Usuario dono do token não foi encontrado");
+
+		
+	};
+	public CapituloDTO setarParametros(JwtAuthenticationToken token, CapituloDTO dto, Long idLivro) {
+		Long idToken = Long.parseLong(token.getName());
+
+		if(userRepo.existsById(idToken)) {
+			dto.setIdUsuario(idToken);
+			dto.setIdLivro(idLivro);
+			return dto;
+		} 
+		else
+			throw new TokenInvalido("Usuario dono do token não foi encontrado");
+
+		
+	};
+	public CapituloDTO setarParametros(JwtAuthenticationToken token, CapituloDTO dto, Long id, Long idLivro) {
+		Long idToken = Long.parseLong(token.getName());
+
+		if(userRepo.existsById(idToken)) {
+			dto.setIdUsuario(idToken);
+			dto.setIdLivro(idLivro);
+			return dto;
+		} 
+		else
+			throw new TokenInvalido("Usuario dono do token não foi encontrado");
+
+		
 	};
 
 }
