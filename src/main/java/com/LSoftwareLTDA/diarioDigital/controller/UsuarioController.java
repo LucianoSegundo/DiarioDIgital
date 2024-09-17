@@ -42,12 +42,12 @@ public class UsuarioController {
 	@ApiResponse(responseCode = "200", description = "Usuario cadastrado com sucesso")
 	@ApiResponse(responseCode = "400", description = "Cadastro negado devido a falta de parametros essenciais")
 	@ApiResponse(responseCode = "406", description = "Cadastro negado devido a existencia do mesmo usuário no banco de dados")
-	@PostMapping(value = "/cadastro")
+	@PostMapping(value = "/")
 	public ResponseEntity<UsuarioResponse> cadastrarUsuario(@RequestBody CadastroRequest request) {
 
 		UsuarioResponse resposta = userServi.cadastrarUsuario(request);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(resposta.id()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(resposta.id()).toUri();
 
 		return ResponseEntity.created(uri).body(resposta);
 	}
@@ -100,9 +100,7 @@ public class UsuarioController {
 	public ResponseEntity<UsuarioResponse> trocarSenha(@RequestBody TrocaSenhaRequest request,
 			JwtAuthenticationToken token) {
 
-		UsuarioResponse resposta = userServi.trocarSenha(
-				userServi.extrairId(token),
-				request.novaSenha(),
+		UsuarioResponse resposta = userServi.trocarSenha(userServi.extrairId(token), request.novaSenha(),
 				request.palavraSeguranca());
 
 		return ResponseEntity.ok(resposta);
@@ -114,9 +112,6 @@ public class UsuarioController {
 	@ApiResponse(responseCode = "404", description = "Usuario não encontrado")
 	@DeleteMapping(value = "/excluir")
 	public ResponseEntity<Void> deletarUsuario(@RequestBody String senha, JwtAuthenticationToken token) {
-
-		
-		 
 
 		userServi.excluirUsuario(userServi.extrairId(token), senha);
 

@@ -26,7 +26,7 @@ public class FiltroSeguranca {
 				};
 		http
 		.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers(HttpMethod.POST, uriBasica+"/cadastro").permitAll()
+				.requestMatchers(HttpMethod.POST, uriBasica+"/").permitAll()
 				.requestMatchers(HttpMethod.POST, uriBasica+"/login").permitAll()
 				.requestMatchers(lista).permitAll()
 
