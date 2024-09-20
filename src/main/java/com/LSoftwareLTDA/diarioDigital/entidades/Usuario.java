@@ -3,7 +3,8 @@ package com.LSoftwareLTDA.diarioDigital.entidades;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.CadastroRequest;
+import com.LSoftwareLTDA.diarioDigital.entidades.enumeracoes.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,8 +40,12 @@ public class Usuario {
     
     @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL)
     private List<Livro> livros;
+
+	private Role role;
     
-    public Usuario() {} 
+    public Usuario() {
+    	
+    } 
     
     public Usuario(String nome, String senha, String palavra,int idade){
         this.senha = senha;
@@ -48,18 +53,19 @@ public class Usuario {
         this.idade = idade;
         this.PalavraSegu = palavra;
         this.ativo = true;
+        this.role = Role.USER;
         this.livros = new ArrayList<>();
     }
     
-    public Usuario(UsuarioDTO entidade) {
-		this.id= entidade.getId();
-		this.nome = entidade.getNome();
-		this.senha = entidade.getSenha();
-		this.idade = entidade.getIdade();
-		this.PalavraSegu = entidade.getPalavraSegu();
-		this.ativo = entidade.getAtivo();
-		this.livros = entidade.getLivros();
-        this.livros = entidade.getLivros();
+    public Usuario(CadastroRequest request) {
+		
+		this.nome = request.nome();
+		this.senha = request.senha();
+		this.idade = request.idade();
+		this.PalavraSegu = request.palavraSegu();
+	    this.ativo = true;
+        this.role = Role.USER;
+        this.livros = new ArrayList<>();
 	}
 	
     //get e seter adicionado pelo fato do eclipse não suportar lombok nativamente.
@@ -114,7 +120,17 @@ public class Usuario {
 	public void setLivros(List<Livro> livros) {
 		this.livros = livros;
 	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
 	
     
 
 }
+
+

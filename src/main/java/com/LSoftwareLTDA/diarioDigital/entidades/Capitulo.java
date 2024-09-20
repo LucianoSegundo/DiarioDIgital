@@ -1,6 +1,6 @@
 package com.LSoftwareLTDA.diarioDigital.entidades;
 
-import com.LSoftwareLTDA.diarioDigital.controller.dto.CapituloDTO;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.capitulos.CapituloRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -20,47 +20,40 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Capitulo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "Tb_Titulo")
-    private String titulo;
-    
-    @Column(name = "Tb_Numero_Capitulo")
-    private int numeroCapitulo;
+	@Column(name = "Tb_Titulo")
+	private String titulo;
 
-    @Column(name = "Tb_Conteudo")
-    @NotBlank(message = "Campo conteudo não deve ser nulo")
-    private String conteudo;
-    
-    @ManyToOne
-    @JsonIgnore
-    private Livro livro;
-    
-    
-    public Capitulo() {};
-    public Capitulo(CapituloDTO capitulo, Livro livro) {
-    	this.titulo = capitulo.getTitulo();
-    	this.conteudo = capitulo.getConteudo();
-    	this.livro = livro;
-    	this.numeroCapitulo = capitulo.getNumeroCapitulo();
+	@Column(name = "Tb_Numero_Capitulo")
+	private int numeroCapitulo;
 
-    }
-    public Capitulo(CapituloDTO capitulo) {
-    	this.titulo = capitulo.getTitulo();
-    	this.conteudo = capitulo.getConteudo();
-    	this.id = capitulo.getId();
-    	this.livro = capitulo.getLivro();
-    	this.numeroCapitulo = capitulo.getNumeroCapitulo();
+	@Column(name = "Tb_Conteudo")
+	@NotBlank(message = "Campo conteudo não deve ser nulo")
+	private String conteudo;
 
-    }
-    public Capitulo(String titulo, String conteudo, Livro livro, int numero){
-        this.titulo = titulo;
-        this.conteudo= conteudo;
-        this.livro= livro;
-        this.numeroCapitulo = numero;
-    }
+	@ManyToOne
+	@JsonIgnore
+	private Livro livro;
+
+	public Capitulo() {
+	};
+
+	public Capitulo(CapituloRequest request, Livro livro) {
+		this.titulo = request.titulo();
+		this.conteudo = request.Conteudo();
+		this.livro = livro;
+		this.numeroCapitulo = livro.getCapitulos().size() + 1;
+
+	}
+
+	public Capitulo(String titulo, String conteudo, Livro livro) {
+		this.titulo = titulo;
+		this.conteudo = conteudo;
+		this.livro = livro;
+	}
 
 	public Long getId() {
 		return id;
@@ -93,13 +86,13 @@ public class Capitulo {
 	public void setLivro(Livro livro) {
 		this.livro = livro;
 	}
+
 	public int getNumeroCapitulo() {
 		return numeroCapitulo;
 	}
+
 	public void setNumeroCapitulo(int numeroCapitulo) {
 		this.numeroCapitulo = numeroCapitulo;
 	}
-    
-    
 
 }

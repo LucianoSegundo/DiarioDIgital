@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.LSoftwareLTDA.diarioDigital.controller.dto.UsuarioDTO;
-import com.LSoftwareLTDA.diarioDigital.entidades.Usuario;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.CadastroRequest;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.loginRequest;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.resposta.UsuarioResponse;
 import com.LSoftwareLTDA.diarioDigital.service.UserService;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.CadastroNegadoException;
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.EntidadeNaoEncontrada;
@@ -25,7 +27,12 @@ import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException
 class UserServiceTeste {
 
 	@Autowired
-	UserService userServi;
+	private UserService userServi;
+	@Autowired
+	private BCryptPasswordEncoder codificadorSenha;
+
+	
+
 	
 // testes de cadastro
 	
@@ -33,11 +40,11 @@ class UserServiceTeste {
 	@DisplayName("Cadastrar usuário com sucesso")
 	void CadastrarUserSucesso() throws Exception {
 		
-		UsuarioDTO dto = new UsuarioDTO("Noel Gallager", "12345689", "calopsita", 22);
-		var usuario = userServi.cadastrarUsuario(dto);
+		CadastroRequest request = new CadastroRequest("Noel Gallager", "1234", "calopsita", 22);
+		var usuario = userServi.cadastrarUsuario(request);
 		
 		assertThat(usuario).describedAs("usuario retornou null").isNotNull();
-		excluirUsuario(usuario);
+		excluirUsuario(usuario.id());
 
 	}
 
@@ -45,13 +52,14 @@ class UserServiceTeste {
 	@DisplayName("Cadastrar usuário já cadastrado")
 	void CadastrarUserCadastrado() throws Exception {
 
-		UsuarioDTO dto = new UsuarioDTO("Alex Turner", "12345689", "calopsita", 22);
-		var usuario = userServi.cadastrarUsuario(dto);
+		CadastroRequest request = new CadastroRequest("Alex Turner", "1234", "calopsita", 22);
+		var usuario = userServi.cadastrarUsuario(request);
 		
 		assertThrows(CadastroNegadoException.class, () -> {
-			userServi.cadastrarUsuario(dto);
+			userServi.cadastrarUsuario(request);
 		}, "Usuário que já estava cadastrado não foi barrada ao tentar se cadastrar");
-		excluirUsuario(usuario);
+		
+		excluirUsuario(usuario.id());
 
 	}
 	
@@ -59,10 +67,10 @@ class UserServiceTeste {
 	@DisplayName("Cadastrar usuario menor de idade")
 	void CadastrarUserMenor() throws Exception {
 		
-		UsuarioDTO dto = new UsuarioDTO("David Grow", "12345689", "calopsita", 17);
+		CadastroRequest request = new CadastroRequest("David Grow", "1234", "calopsita", 17);
 		
-		assertThrows(CadastroNegadoException.class, () -> {
-			userServi.cadastrarUsuario(dto);
+		assertThrows(PermissaoNegadaException.class, () -> {
+			userServi.cadastrarUsuario(request);
 		}, "Cadastro que não deveria ser realizado, usuario menor de idade, foi realizado");
 
 	}
@@ -72,12 +80,13 @@ class UserServiceTeste {
 	@DisplayName("Logar com sucesso")
 	void LoginSucesso() throws Exception {
 		
-		UsuarioDTO dto = new UsuarioDTO("Caio de Arruda Miranda", "12345689", "calopsita", 22);
-		dto = userServi.cadastrarUsuario(dto);
-		var usuario = userServi.logar("Caio de Arruda Miranda", "12345689");
+		CadastroRequest request = new CadastroRequest("Caio de Arruda Miranda", "1234", "calopsita", 22);
+		UsuarioResponse usuario = userServi.cadastrarUsuario(request);
 		
-		assertThat(usuario).describedAs("cadastro retornou null").isNotNull();
-		excluirUsuario(dto);
+		var usuarioLogin = userServi.logar(new loginRequest("Caio de Arruda Miranda", "1234"));
+		
+		assertThat(usuarioLogin).describedAs("cadastro retornou null").isNotNull();
+		excluirUsuario(usuario.id());
 
 	}
 
@@ -86,7 +95,7 @@ class UserServiceTeste {
 	void LoginMalSucedido() throws Exception {
 
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			userServi.logar("Caio de Arruda Miranda2", "12345689");
+			 userServi.logar(new loginRequest("Caio de Arruda Miranda2", "1234"));
 		}, "Exceção que deveria ser lançada ao barrar um login não foi lançada");
 
 	}
@@ -98,13 +107,13 @@ class UserServiceTeste {
 	@DisplayName("Recuperar senha com sucesso.")
 	void RecuperarSucesso() throws Exception {
 		
-		UsuarioDTO dto = new UsuarioDTO("Alex Turner2", "abacate", "calopcita", 22);
-		userServi.cadastrarUsuario(dto);
-		var usuario = userServi.recuperarSenha("Alex Turner2", "12345678", "calopcita");
+		CadastroRequest request = new CadastroRequest("Alex Turner2", "abacate", "calopcita", 22);
+		userServi.cadastrarUsuario(request);
+		var usuario = userServi.recuperarSenha("Alex Turner2", "1234", "calopcita");
 		
 		assertThat(usuario).describedAs("usuario retornol como nulo").isNotNull();
-		assertThat(usuario.getSenha()).describedAs("senha não retornou igual a nova senha").isEqualTo("12345678");
-		excluirUsuario(usuario);
+		
+		excluirUsuario(usuario.id());
 
 	}
 	
@@ -113,7 +122,7 @@ class UserServiceTeste {
 	void RecuperarSemConta() throws Exception {
 
 		assertThrows(EntidadeNaoEncontrada.class, () -> {
-			userServi.recuperarSenha("Alex Turner3", "12345678", "calopcita");
+			userServi.recuperarSenha("Alex Turner3", "1234", "calopcita");
 		}, "Conta foi tratada como cadastrada, o teste falhou");
 
 	}
@@ -122,17 +131,17 @@ class UserServiceTeste {
 	@DisplayName("Tentar recuperar senha com palavra de segurança errada.")
 	void RecuperarSemPalavra() throws Exception {
 
-		UsuarioDTO dto = new UsuarioDTO("Alex Turner4", "12345678", "calopcita", 22);
+		CadastroRequest request = new CadastroRequest("Alex Turner4", "1234", "calopcita", 22);
 
-		dto = userServi.cadastrarUsuario(dto);
+		UsuarioResponse usuario = userServi.cadastrarUsuario(request);
 
 		assertThrows(PermissaoNegadaException.class, () -> {
-			userServi.recuperarSenha("Alex Turner4", "12345678", "cacatua");
+			userServi.recuperarSenha("Alex Turner4", "1234", "cacatua");
 		}, " palavra de segurança foi tratada como correta, teste falhou");
-		excluirUsuario(dto);
+		
+		excluirUsuario(usuario.id());
 
 	}
-	
 	
 // excluir conta
 	
@@ -140,11 +149,11 @@ class UserServiceTeste {
 	@DisplayName("Excluir conta com sucesso")
 	void ExcluirSucesso() throws Exception {
 		
-		UsuarioDTO usuario = new UsuarioDTO("Alex Turner5", "abacate", "calopcita", 22);
+		CadastroRequest request = new CadastroRequest("Alex Turner5", "abacate", "calopcita", 22);
 
 		
-		 usuario  =userServi.cadastrarUsuario(usuario);
-		Boolean resultado = userServi.excluirUsuario(usuario);		
+		UsuarioResponse usuario  = userServi.cadastrarUsuario(request);
+		Boolean resultado = userServi.excluirUsuario(usuario.id(), request.senha());		
 		assertThat(resultado).describedAs("Usuario não foi excluido").isTrue();
 
 	}
@@ -153,41 +162,35 @@ class UserServiceTeste {
 	@DisplayName("Tentar excluir com senha errada")
 	void FalharExcluir() throws Exception {
 		
-		UsuarioDTO usuario = new UsuarioDTO("Alex Turner6", "abacate", "calopcita", 22);
-
-		var usuario2  =userServi.cadastrarUsuario(usuario);
-		 usuario2.setSenha("111111111111111111111111111111111111111111");
+		CadastroRequest request = new CadastroRequest("Alex Turner6", "1234", "calopcita", 22);
+		UsuarioResponse usuario  =userServi.cadastrarUsuario(request);
+		
 		assertThrows(PermissaoNegadaException.class, ()->{
-			userServi.excluirUsuario(usuario2);		
+			userServi.excluirUsuario(usuario.id(),"1111" );		
 			
 		});
 		
-		 usuario2.setSenha("abacate");
-		excluirUsuario(usuario2);
+		excluirUsuario(usuario.id());
 
 		
 	}
+	
 	@Test
 	@DisplayName("Tentar excluir com id null")
 	void ExcluirIDNull()  {
 		
-		UsuarioDTO usuario = new UsuarioDTO("Alex Turner8", "abacate", "calopcita", 22);
-
-		
-		var usuario2  =userServi.cadastrarUsuario(usuario);
 	
 		assertThrows(PermissaoNegadaException.class, ()->{
-			userServi.excluirUsuario(usuario);		
+			userServi.excluirUsuario(null, "aaaaa" );		
 			
 		});
-		excluirUsuario(usuario2);
 	}
 	
-	
-	private void excluirUsuario(UsuarioDTO usuario) {
+	private void excluirUsuario(Long id) {
 
-		 userServi.excluirUsuario(usuario);
+		 userServi.excluirUsuario(id,"1234" );
 	}
+	
 
 	
 }
