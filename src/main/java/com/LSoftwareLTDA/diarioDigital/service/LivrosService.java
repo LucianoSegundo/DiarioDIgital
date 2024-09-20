@@ -22,14 +22,8 @@ import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.TokenInvalido;
 
 import jakarta.validation.ConstraintViolationException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Component
-@Getter
-@Setter
-@NoArgsConstructor
 public class LivrosService {
 
 	private LivroRepositorio livroRepo;
@@ -137,5 +131,23 @@ public class LivrosService {
 		} else
 			throw new TokenInvalido("Usuario dono do token não foi encontrado");
 
+	}
+	public LivroRepositorio getLivroRepo() {
+		return livroRepo;
+	}
+	public void setLivroRepo(LivroRepositorio livroRepo) {
+		this.livroRepo = livroRepo;
+	}
+	public UsuarioRepositorio getUserRepo() {
+		return userRepo;
+	}
+	public void setUserRepo(UsuarioRepositorio userRepo) {
+		this.userRepo = userRepo;
+	}
+	public BCryptPasswordEncoder getCodificador() {
+		return codificador;
+	}
+	public void setCodificador(BCryptPasswordEncoder codificador) {
+		this.codificador = codificador;
 	}
 }

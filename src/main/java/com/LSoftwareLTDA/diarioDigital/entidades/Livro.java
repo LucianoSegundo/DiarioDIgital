@@ -16,45 +16,40 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
 public class Livro {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "Tb_Titulo")
-    @NotBlank(message = "Titulo de usuário não pode ser nulo")
-    private String titulo;
-    
-    @ManyToOne
-    @JoinColumn(name = "usuario_Id")
-    @JsonIgnore
-    private Usuario usuario;
+	@Column(name = "Tb_Titulo")
+	@NotBlank(message = "Titulo de usuário não pode ser nulo")
+	private String titulo;
 
-    @OneToMany(mappedBy = "livro",cascade = CascadeType.ALL)
-    private List<Capitulo> capitulos;
+	@ManyToOne
+	@JoinColumn(name = "usuario_Id")
+	@JsonIgnore
+	private Usuario usuario;
 
-    public Livro(String titulo, Usuario usuario){
-        this.titulo = titulo;
-        this.usuario = usuario;
-        this.capitulos = new ArrayList<>();
-    }
-    
-   
-    public Livro(LivroResponse entidade){
-    	this.id =entidade.id();
-        this.titulo = entidade.titulo();
-        this.capitulos = new ArrayList<Capitulo>();
-    }
-    public Livro() {};
+	@OneToMany(mappedBy = "livro", cascade = CascadeType.ALL)
+	private List<Capitulo> capitulos;
+
+	public Livro() {
+	};
+
+	public Livro(String titulo, Usuario usuario) {
+		this.titulo = titulo;
+		this.usuario = usuario;
+		this.capitulos = new ArrayList<>();
+	}
+
+	public Livro(LivroResponse entidade) {
+		this.id = entidade.id();
+		this.titulo = entidade.titulo();
+		this.capitulos = new ArrayList<Capitulo>();
+	}
 
 	public Long getId() {
 		return id;
@@ -63,25 +58,29 @@ public class Livro {
 	public Usuario getUsuario() {
 		return usuario;
 	}
+
 	public String getTitulo() {
 		return titulo;
 	}
+
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
+
 	public List<Capitulo> getCapitulos() {
 		return capitulos;
 	}
+
 	public void setCapitulos(List<Capitulo> capitulos) {
 		this.capitulos = capitulos;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-    
-    
 
 }

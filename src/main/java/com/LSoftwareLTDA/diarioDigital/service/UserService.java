@@ -27,13 +27,7 @@ import com.LSoftwareLTDA.diarioDigital.service.excecoes.PermissaoNegadaException
 import com.LSoftwareLTDA.diarioDigital.service.excecoes.TokenInvalido;
 
 import jakarta.validation.ConstraintViolationException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@Getter
-@Setter
 @Service
 public class UserService {
 
@@ -41,6 +35,7 @@ public class UserService {
 	private RecuperacaoSenha recuperadorSenha;
 	private BCryptPasswordEncoder codificadorSenha;
 	private JwtEncoder jwtCodificador;
+
 
 	public UserService(UsuarioRepositorio repositorio, RecuperacaoSenha recuperador,
 			BCryptPasswordEncoder codificadorSenha, JwtEncoder codificador) {
@@ -221,6 +216,38 @@ public class UserService {
 		} else
 			throw new TokenInvalido("Usuario dono do token não foi encontrado");
 
+	}
+
+	public UsuarioRepositorio getUserRepo() {
+		return userRepo;
+	}
+
+	public void setUserRepo(UsuarioRepositorio userRepo) {
+		this.userRepo = userRepo;
+	}
+
+	public RecuperacaoSenha getRecuperadorSenha() {
+		return recuperadorSenha;
+	}
+
+	public void setRecuperadorSenha(RecuperacaoSenha recuperadorSenha) {
+		this.recuperadorSenha = recuperadorSenha;
+	}
+
+	public BCryptPasswordEncoder getCodificadorSenha() {
+		return codificadorSenha;
+	}
+
+	public void setCodificadorSenha(BCryptPasswordEncoder codificadorSenha) {
+		this.codificadorSenha = codificadorSenha;
+	}
+
+	public JwtEncoder getJwtCodificador() {
+		return jwtCodificador;
+	}
+
+	public void setJwtCodificador(JwtEncoder jwtCodificador) {
+		this.jwtCodificador = jwtCodificador;
 	}
 
 }

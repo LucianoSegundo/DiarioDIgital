@@ -118,4 +118,28 @@ public class CapituloService {
 
 	}
 
+	public LivroRepositorio getLivroRepp() {
+		return livroRepp;
+	}
+
+	public void setLivroRepp(LivroRepositorio livroRepp) {
+		this.livroRepp = livroRepp;
+	}
+
+	public CapituloRepositorio getCapRepo() {
+		return capRepo;
+	}
+
+	public void setCapRepo(CapituloRepositorio capRepo) {
+		this.capRepo = capRepo;
+	}
+
+	public UsuarioRepositorio getUserRepo() {
+		return userRepo;
+	}
+
+	public void setUserRepo(UsuarioRepositorio userRepo) {
+		this.userRepo = userRepo;
+	}
+
 }
