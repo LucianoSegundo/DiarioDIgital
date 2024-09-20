@@ -65,17 +65,16 @@ public class CapituloService {
 	@Transactional(readOnly = true)
 	public CapituloResponse consultarCapitulo(Long idLivro, Long id) {
 
-		try {
+		if(idLivro==null || id ==null)throw new PermissaoNegadaException(
+				"Não foi possivel excluir capitulo, Algum dos identificadores está nulo");
+		
 
 			var capitulo = capRepo.findByIdAndLivro_id(id, idLivro)
 					.orElseThrow(() -> new EntidadeNaoEncontrada("Entidade não encontrada"));
 
 			return new CapituloResponse(capitulo);
 
-		} catch (InvalidDataAccessApiUsageException e) {
-			throw new PermissaoNegadaException(
-					"Não foi possivel excluir capitulo, Algum dos identificadores está nulo");
-		}
+		
 	}
 
 	@Transactional
