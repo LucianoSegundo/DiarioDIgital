@@ -170,6 +170,7 @@ class CapituloServiceTest {
 
 		}, "teste falhou.");
 
+		excluirUsuario(livro.getUsuario());
 	}
 
 	// excluir
