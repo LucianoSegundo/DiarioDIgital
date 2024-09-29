@@ -28,6 +28,7 @@ public class FiltroSeguranca {
 		.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(HttpMethod.POST, uriBasica+"/").permitAll()
 				.requestMatchers(HttpMethod.POST, uriBasica+"/login").permitAll()
+				.requestMatchers(HttpMethod.PUT, uriBasica+"/recuperarSenha").permitAll()
 				.requestMatchers(lista).permitAll()
 
 				.anyRequest().authenticated()
