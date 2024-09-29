@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.CadastroRequest;
+import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.RecuperarSenhaRequest;
 import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.TrocaSenhaRequest;
 import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.requisicoes.loginRequest;
 import com.LSoftwareLTDA.diarioDigital.controller.dto.usuario.resposta.UsuarioResponse;
@@ -105,6 +106,17 @@ public class UsuarioController {
 
 		UsuarioResponse resposta = userServi.trocarSenha(userServi.extrairId(token), request.novaSenha(),
 				request.palavraSeguranca());
+
+		return ResponseEntity.ok(resposta);
+	}
+	@Operation(summary = "Recuperar senha do usuário", description = "Receber palavra de segurança e nova senha para trocar a senha do usuário")
+	@ApiResponse(responseCode = "200", description = "Senha trocada com sucesso")
+	@ApiResponse(responseCode = "400", description = "não foi possivel trocara senha")
+	@ApiResponse(responseCode = "404", description = "Usuario não encontrado")
+	@PutMapping(value = "/recuperarSenha")
+	public ResponseEntity<UsuarioResponse> recuperarSenha(@RequestBody RecuperarSenhaRequest request) {
+
+		UsuarioResponse resposta = userServi.recuperarSenha(request.nome(), request.novaSenha(), request.palavraSeguranca());
 
 		return ResponseEntity.ok(resposta);
 	}
