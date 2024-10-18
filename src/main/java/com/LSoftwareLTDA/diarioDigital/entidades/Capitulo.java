@@ -24,7 +24,7 @@ public class Capitulo {
 	@Column(name = "Tb_Numero_Capitulo")
 	private int numeroCapitulo;
 
-	@Column(name = "Tb_Conteudo")
+	@Column(name = "Tb_Conteudo", length = 5000)
 	@NotBlank(message = "Campo conteudo não deve ser nulo")
 	private String conteudo;
 
