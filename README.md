@@ -6,10 +6,9 @@ O projeto **DiárioDigital** surgiu como parte da disciplina de testes de softwa
 - **DiarioDIgital** : [https://github.com/LucianoSegundo/DiarioDIgital](https://github.com/LucianoSegundo/DiarioDIgital)
 - **DiarioDIgital** : [https://github.com/LucianoSegundo/DiarioDigital-Front-End](https://github.com/LucianoSegundo/DiarioDigital-Front-End)
 - **Hospedado da Plataforma** : A plataforma pode ser testada [clicando aqui](https://diariodigital-front-end.onrender.com). A plataforma podera ser testada durante 30 dias, contanto apartir de **15/03/2025**, esse é o tempo de duração do banco de dados gratuito fornecido pela plataforma de hospedagem;
-- **Hospegagem da API** : A documentação da API pode ser acessada [clicando aqui](lhttps://diariodigital-2.onrender.com/swagger-ui/index.html), assim comoa plataforma, só estará disponivel pelos proximos 30 dias, contando apartir do dia ***15/03/2025*.
+- **Hospegagem da API** : A documentação da API pode ser acessada [clicando aqui](https://diariodigital-2.onrender.com/swagger-ui/index.html), assim comoa plataforma, só estará disponivel pelos proximos 30 dias, contando apartir do dia ***15/03/2025*. OBS: è politica do fornecedor da hospedagem gratuita desligar o servidor caso ele passe alguns minutos sem receber nenhum acesso, o servidor é restartado quando recebe uma nova requisição, oque leva um tempo para acontecer.
 
 ## Diagrama de Classes
-### Diagrama das Entidades do Sistema
 ```mermaid
 
 classDiagram
@@ -55,4 +54,10 @@ classDiagram
 
  
 ```
-texto comum
+## Ferramentas Utilizadas
+- Swegger
+- MySql
+- PostgresSQL
+- Spring Data JPA
+- Spring Web
+- Spring Security
