@@ -54,6 +54,76 @@ classDiagram
 
  
 ```
+
+## Imagens da Plataforma
+
+### Homepage Parte 01
+
+![pagina01](imagens/pagina01.png)
+
+### Homepage Parte 02: Cadastro
+
+![pagina02](imagens/pagina02.png)
+
+### Pagina de Login
+
+![pagina03](imagens/pagina03.png)
+
+### Pagina de Login Aguardando resposta do Back-End
+
+![pagina04](imagens/pagina04.png)
+
+### Pagina de Login Negado
+
+![pagina05](imagens/pagina05.png)
+
+### Pagina de Recuperação de Senha
+
+![pagina06](imagens/pagina06.png)
+
+### Pagina Principal Sem Nenhum Livro
+
+![pagina07](imagens/pagina07.png)
+
+### Pagina Principal + Criação de Livro
+
+![pagina08](imagens/pagina08.png)
+
+### Pagina Principal com Livro
+
+![pagina09](imagens/pagina09.png)
+
+### Pagina do Livro Selecionado sem Capitulos
+
+![pagina10](imagens/pagina10.png)
+
+### Pagina de Exclusão de Livros
+
+![pagina11](imagens/pagina11.png)
+
+### Pagina de Criação de Capitulos
+
+![pagina12](imagens/pagina12.png)
+
+### Pagina do Livro Selecionado com Capitulos
+
+![pagina13](imagens/pagina13.png)
+
+### Pagina de Leitura de Capitulo
+
+![pagina14](imagens/pagina14.png)
+
+### Pagina Pagina de Exclusão de Capitulo + Aviso de Fim de Sessão
+
+![pagina15](imagens/pagina15.png)
+
+### Pagina de Exclusão de Conta
+![pagina16](imagens/pagina16.png)
+
+## Banco de Dados
+Em produção foi usado um banco PostGreSQL, o banco fornecido pelo serviço de hospedagem gratuita.
+Contudo em Desenvolviemento foi usado um Banco MySQL, com o qual era inicialmente projetado para trabalhar.
+
 ## Ferramentas Utilizadas
 - Swegger
 - MySql
@@ -61,3 +131,4 @@ classDiagram
 - Spring Data JPA
 - Spring Web
 - Spring Security
+- JWT
