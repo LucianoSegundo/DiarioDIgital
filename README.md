@@ -9,3 +9,50 @@ O projeto **DiárioDigital** surgiu como parte da disciplina de testes de softwa
 - **Hospegagem da API** : A documentação da API pode ser acessada [clicando aqui](lhttps://diariodigital-2.onrender.com/swagger-ui/index.html), assim comoa plataforma, só estará disponivel pelos proximos 30 dias, contando apartir do dia ***15/03/2025*.
 
 ## Diagrama de Classes
+### Diagrama das Entidades do Sistema
+```mermaid
+
+classDiagram
+    class Usuario {
+        +Long id
+        +String nome
+        +String senha
+        +int idade
+        +String PalavraSegu
+        +Boolean ativo
+        +List<Livro> livros
+        +Role role
+    }
+
+    class Livro {
+        +Long id
+        +String titulo
+        +List<Capitulo> capitulos
+    }
+
+    class Capitulo {
+        +Long id
+        +String titulo
+        +int numeroCapitulo
+        +String conteudo
+    }
+
+    class Role {
+        <<enumeration>>
+        +int value
+        +ADMIN(1)
+        +USER(2)
+        +getValue()
+        +fromValue(int value)
+    }
+
+    Usuario "1" -- "0..*" Livro : possui
+    Livro "1" -- "0..*" Capitulo : possui
+    Livro "1" -- "1" Usuario : pertence a
+    Capitulo "1" -- "1" Livro : pertence a
+    Usuario "1...*" -- "1...*" Role : possui
+
+
+ 
+```
+texto comum
